@@ -1,12 +1,5 @@
 [
   {
-    "id": "0025",
-    "name": "ピカチュウ",
-    "image": "0025_ピカチュウ_treemap.png",
-    "types": ["でんき"],
-    "abilities": ["せいでんき", "ひらいしん"]
-  },
-  {
     "id": "0001",
     "name": "フシギダネ",
     "image": "0001_フシギダネ_treemap.png",
@@ -68,5 +61,19 @@
     "image": "0009_カメックス_treemap.png",
     "types": ["ほのお"],
     "abilities": ["もうか", "サンパワー"]
+  },
+  {
+    "id": "0025",
+    "name": "ピカチュウ",
+    "image": "0025_ピカチュウ_treemap.png",
+    "types": ["でんき"],
+    "abilities": ["せいでんき", "ひらいしん"]
+  },
+  {
+    "id": "0365",
+    "name": "トドゼルガ",
+    "image": "0365_トドゼルガ_treemap.png",
+    "types": ["でんき"],
+    "abilities": ["せいでんき", "ひらいしん"]
   }
 ]

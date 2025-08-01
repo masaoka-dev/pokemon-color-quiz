@@ -74,9 +74,8 @@ export default function QuizPage() {
         <p className="mb-2 text-gray-600">この画像のポケモンはだれ？</p>
 
         <img
-          src={`/${current.image}`}
+          src={`/pokemon_treemaps/${current.image}`}
           alt={`クイズ画像 ${currentIndex + 1}`}
-          className="w-64 h-64 mx-auto object-contain mb-4 border rounded-lg"
         />
 
         {!showAnswer ? (
