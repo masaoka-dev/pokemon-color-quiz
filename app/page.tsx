@@ -1,14 +1,29 @@
 'use client';
 
-import React, { useState, useEffect, createElement } from 'react';
-import quizData from './data/pokemon_data.json';
+import React, { useState, useEffect } from 'react';
 
 type QuizItem = {
   id: string;
+  no: string;
+  sub: string;
   name: string;
+  sub_name: string;
+  area: string;
+  omosa: string;
+  takasa: string;
+  bunrui: string;
+  tokusei_1: string;
+  tokusei_2: string;
+  tokusei_3: string;
+  tokusei_4: string;
+  type_1: string;
+  type_2: string;
+  mega_flg: string;
+  genshi_flg: string;
+  kyodai_flg: string;
+  is_final_evolution: string;
   image: string;
-  types: string[];
-  abilities: string[];
+  image_treemap: string;
 };
 
 const area_button_color = (on_off: boolean) => {
@@ -23,6 +38,7 @@ export default function QuizPage() {
   const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
   const [options, setOptionss] = useState([true, true]);
   
+  const [allQuizData, setAllQuizData] = useState<QuizItem[]>([]);
   const [quizList, setQuizList] = useState<QuizItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
@@ -30,8 +46,15 @@ export default function QuizPage() {
   const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
-    const shuffled = [...quizData].sort(() => 0.5 - Math.random());
-    setQuizList(shuffled.slice(0, 10)); // ランダムに10問
+    fetch('/data/pokemon_data.jsonl')
+    .then((res) => res.text())
+    .then((text) => {
+      const lines = text.trim().split('\n');
+      const parsed: QuizItem[] = lines.map((line) => JSON.parse(line));
+      const shuffled = parsed.sort(() => 0.5 - Math.random());
+      setAllQuizData(parsed); // ← ここを追加
+      setQuizList(shuffled.slice(0, 10));
+    });
   }, []);
   const area_names = ["カントー", "ジョウト", "ホウエン"];
 
@@ -137,7 +160,7 @@ export default function QuizPage() {
         <h1 className="text-2xl font-bold mb-4">クイズ終了！🎉</h1>
         <button
           onClick={() => {
-            const reshuffled = [...quizData].sort(() => 0.5 - Math.random());
+            const reshuffled = [...allQuizData].sort(() => 0.5 - Math.random());
             setQuizList(reshuffled.slice(0, 10));
             setCurrentIndex(0);
             setResult(null);
@@ -159,7 +182,7 @@ export default function QuizPage() {
         <p className="mb-2 text-gray-600">この画像のポケモンはだれ？</p>
 
         <img
-          src={`/pokemon_treemaps/${current.image}`}
+          src={`/pokemon_treemaps/${current.image_treemap}`}
           alt={`クイズ画像 ${currentIndex + 1}`}
         />
 
@@ -188,8 +211,11 @@ export default function QuizPage() {
             </div>
             <div className="text-left mt-4 space-y-2">
               <p><strong>名前:</strong> {current.name}</p>
-              <p><strong>タイプ:</strong> {current.types.join(' / ')}</p>
-              <p><strong>とくせい:</strong> {current.abilities.join(' / ')}</p>
+              <p><strong>タイプ:</strong> {[current.type_1, current.type_2].filter(Boolean).join(' / ')}</p>
+              <p><strong>とくせい:</strong> {
+              [current.tokusei_1, current.tokusei_2, current.tokusei_3, current.tokusei_4]
+              .filter(Boolean).join(' / ')
+              }</p>
             </div>
             <button
               onClick={handleNext}
