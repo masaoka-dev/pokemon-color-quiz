@@ -12,6 +12,8 @@ type QuizItem = {
 };
 
 export default function QuizPage() {
+  const [scene, setScene] = useState(0);
+  const [difficulty, setDifficulty] = useState(0);
   const [quizList, setQuizList] = useState<QuizItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
@@ -41,6 +43,68 @@ export default function QuizPage() {
     setResult(null);
     setShowAnswer(false);
   };
+
+  const difficulty_monsterBall = () => {
+    setDifficulty(1);
+    setScene(1);
+  };
+
+  const difficulty_superBall = () => {
+    setDifficulty(2);
+    setScene(1);
+  };
+
+  const difficulty_hyperBall = () => {
+    setDifficulty(3);
+    setScene(1);
+  };
+
+  const difficulty_masterBall = () => {
+    setDifficulty(4);
+    setScene(1);
+  };
+
+  if (scene == 0) {
+    return (
+      
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="w-full max-w-md text-center">
+      <h1 className="text-xl font-bold mb-4">ポケモン色彩クイズ</h1>
+      <div className="grid grid-cols-3">
+        <div></div>
+        <div className="flex flex-col justify-center gap-2">
+          <button
+            onClick={difficulty_monsterBall}
+            className="bg-red-700 text-white py-2 rounded hover:bg-red-800"
+          >
+            モンスターボール級
+          </button>
+          <button
+            onClick={difficulty_superBall}
+            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
+            スーパーボール級
+          </button>
+          <button
+            onClick={difficulty_hyperBall}
+            className="bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700"
+          >
+            ハイパーボール級
+          </button>
+          <button
+            onClick={difficulty_masterBall}
+            className="bg-purple-600 text-white py-2 rounded hover:bg-purple-700"
+          >
+            マスターボール級
+          </button>
+        </div>
+      </div>
+        
+    </div>
+  </div>
+
+    )
+  }
 
   if (quizList.length === 0) {
     return <div className="min-h-screen flex items-center justify-center">読み込み中...</div>;
