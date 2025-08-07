@@ -33,14 +33,11 @@ const area_button_color = (on_off: boolean) => {
 }
 
 export default function QuizPage() {
-<<<<<<< HEAD
-=======
   const [scene, setScene] = useState("title");
   const [difficulty, setDifficulty] = useState(0);
   const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
   const [options, setOptionss] = useState([true, true]);
   
->>>>>>> f43dd594123d9608406cd31354eb19964c034c73
   const [allQuizData, setAllQuizData] = useState<QuizItem[]>([]);
   const [quizList, setQuizList] = useState<QuizItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -80,8 +77,6 @@ export default function QuizPage() {
     setShowAnswer(false);
   };
 
-<<<<<<< HEAD
-=======
   if (scene == "title") {
     return (
       
@@ -155,7 +150,6 @@ export default function QuizPage() {
     )
   }
 
->>>>>>> f43dd594123d9608406cd31354eb19964c034c73
   if (quizList.length === 0) {
     return <div className="min-h-screen flex items-center justify-center">読み込み中...</div>;
   }
