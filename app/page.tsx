@@ -87,12 +87,14 @@ export default function QuizPage() {
               placeholder="ここにポケモンの名前を入力"
               className="w-full p-2 border rounded mb-4"
             />
+            <center>
             <button
               onClick={handleCheck}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-blue-500 text-background gap-2 hover:bg-blue-600 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
             >
               答え合わせ
             </button>
+            </center>
           </>
         ) : (
           <>
