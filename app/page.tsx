@@ -206,6 +206,10 @@ export default function QuizPage() {
           <>
             <div className={`mt-4 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
               {result === 'correct' ? '正解！🎉' : `不正解… 正解は「${current.name}」でした`}
+              <img
+              src={`/pokemon_images/${current.image}`}
+              alt={`クイズ画像 ${currentIndex + 1}`}
+              />
             </div>
             <div className="text-left mt-4 space-y-2">
               <p><strong>名前:</strong> {current.name}</p>
