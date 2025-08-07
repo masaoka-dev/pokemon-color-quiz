@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createElement } from 'react';
 import quizData from './data/pokemon_data.json';
 
 type QuizItem = {
@@ -11,9 +11,18 @@ type QuizItem = {
   abilities: string[];
 };
 
+const area_button_color = (on_off: boolean) => {
+  return on_off ? 
+      "bg-[#0044BB] text-white py-2 rounded hover:bg-[#002299]"
+    : "bg-[#DDDDDD] text-black py-2 rounded hover:bg-[#BBBBBB]"
+}
+
 export default function QuizPage() {
-  const [scene, setScene] = useState(0);
+  const [scene, setScene] = useState("title");
   const [difficulty, setDifficulty] = useState(0);
+  const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
+  const [options, setOptionss] = useState([true, true]);
+  
   const [quizList, setQuizList] = useState<QuizItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
@@ -24,6 +33,7 @@ export default function QuizPage() {
     const shuffled = [...quizData].sort(() => 0.5 - Math.random());
     setQuizList(shuffled.slice(0, 10)); // ランダムに10問
   }, []);
+  const area_names = ["カントー", "ジョウト", "ホウエン"];
 
   const current = quizList[currentIndex];
 
@@ -44,60 +54,71 @@ export default function QuizPage() {
     setShowAnswer(false);
   };
 
-  const difficulty_monsterBall = () => {
-    setDifficulty(1);
-    setScene(1);
-  };
-
-  const difficulty_superBall = () => {
-    setDifficulty(2);
-    setScene(1);
-  };
-
-  const difficulty_hyperBall = () => {
-    setDifficulty(3);
-    setScene(1);
-  };
-
-  const difficulty_masterBall = () => {
-    setDifficulty(4);
-    setScene(1);
-  };
-
-  if (scene == 0) {
+  if (scene == "title") {
     return (
       
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
-    <div className="w-full max-w-md text-center">
-      <h1 className="text-xl font-bold mb-4">ポケモン色彩クイズ</h1>
+    <div className="grid grid-rows-4 items-center w-full max-w-md text-center">
+
+      <h1 className="place-items-center text-xl font-bold">ポケモン色彩クイズ</h1>
+
       <div className="grid grid-cols-3">
         <div></div>
         <div className="flex flex-col justify-center gap-2">
           <button
-            onClick={difficulty_monsterBall}
+            onClick={() => {
+              setDifficulty(1);
+              setScene("game");
+            }}
             className="bg-red-700 text-white py-2 rounded hover:bg-red-800"
           >
             モンスターボール級
           </button>
           <button
-            onClick={difficulty_superBall}
+            onClick={() => {
+              setDifficulty(2);
+              setScene("game");
+            }}
             className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
           >
             スーパーボール級
           </button>
           <button
-            onClick={difficulty_hyperBall}
+            onClick={() => {
+              setDifficulty(3);
+              setScene("game");
+            }}
             className="bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700"
           >
             ハイパーボール級
           </button>
           <button
-            onClick={difficulty_masterBall}
+            onClick={() => {
+              setDifficulty(4);
+              setScene("game");
+            }}
             className="bg-purple-600 text-white py-2 rounded hover:bg-purple-700"
           >
             マスターボール級
           </button>
         </div>
+      </div>
+
+      <div className="flex flex-col justify-center gap-2">
+        {area_names.map((area_name, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              setAreasSelected(prev =>
+                prev.map((selected, i) =>
+                  (i === index ? !selected : selected))
+              );
+            }}
+            className={area_button_color(areasSelected[index])}
+          >
+            {area_name}
+          </button>
+        ))}
       </div>
         
     </div>
