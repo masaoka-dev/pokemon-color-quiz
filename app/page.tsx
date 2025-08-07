@@ -26,7 +26,21 @@ type QuizItem = {
   image_treemap: string;
 };
 
+const area_button_color = (on_off: boolean) => {
+  return on_off ? 
+      "bg-[#0044BB] text-white py-2 rounded hover:bg-[#002299]"
+    : "bg-[#DDDDDD] text-black py-2 rounded hover:bg-[#BBBBBB]"
+}
+
 export default function QuizPage() {
+<<<<<<< HEAD
+=======
+  const [scene, setScene] = useState("title");
+  const [difficulty, setDifficulty] = useState(0);
+  const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
+  const [options, setOptionss] = useState([true, true]);
+  
+>>>>>>> f43dd594123d9608406cd31354eb19964c034c73
   const [allQuizData, setAllQuizData] = useState<QuizItem[]>([]);
   const [quizList, setQuizList] = useState<QuizItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,6 +59,7 @@ export default function QuizPage() {
       setQuizList(shuffled.slice(0, 10));
     });
   }, []);
+  const area_names = ["カントー", "ジョウト", "ホウエン"];
 
   const current = quizList[currentIndex];
 
@@ -65,6 +80,82 @@ export default function QuizPage() {
     setShowAnswer(false);
   };
 
+<<<<<<< HEAD
+=======
+  if (scene == "title") {
+    return (
+      
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="grid grid-rows-4 items-center w-full max-w-md text-center">
+
+      <h1 className="place-items-center text-xl font-bold">ポケモン色彩クイズ</h1>
+
+      <div className="grid grid-cols-3">
+        <div></div>
+        <div className="flex flex-col justify-center gap-2">
+          <button
+            onClick={() => {
+              setDifficulty(1);
+              setScene("game");
+            }}
+            className="bg-red-700 text-white py-2 rounded hover:bg-red-800"
+          >
+            モンスターボール級
+          </button>
+          <button
+            onClick={() => {
+              setDifficulty(2);
+              setScene("game");
+            }}
+            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          >
+            スーパーボール級
+          </button>
+          <button
+            onClick={() => {
+              setDifficulty(3);
+              setScene("game");
+            }}
+            className="bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700"
+          >
+            ハイパーボール級
+          </button>
+          <button
+            onClick={() => {
+              setDifficulty(4);
+              setScene("game");
+            }}
+            className="bg-purple-600 text-white py-2 rounded hover:bg-purple-700"
+          >
+            マスターボール級
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-col justify-center gap-2">
+        {area_names.map((area_name, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              setAreasSelected(prev =>
+                prev.map((selected, i) =>
+                  (i === index ? !selected : selected))
+              );
+            }}
+            className={area_button_color(areasSelected[index])}
+          >
+            {area_name}
+          </button>
+        ))}
+      </div>
+        
+    </div>
+  </div>
+
+    )
+  }
+
+>>>>>>> f43dd594123d9608406cd31354eb19964c034c73
   if (quizList.length === 0) {
     return <div className="min-h-screen flex items-center justify-center">読み込み中...</div>;
   }
