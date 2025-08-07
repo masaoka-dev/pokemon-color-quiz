@@ -1,19 +1,33 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import quizData from './data/pokemon_data.json';
 
 type QuizItem = {
   id: string;
+  no: string;
+  sub: string;
   name: string;
+  sub_name: string;
+  area: string;
+  omosa: string;
+  takasa: string;
+  bunrui: string;
+  tokusei_1: string;
+  tokusei_2: string;
+  tokusei_3: string;
+  tokusei_4: string;
+  type_1: string;
+  type_2: string;
+  mega_flg: string;
+  genshi_flg: string;
+  kyodai_flg: string;
+  is_final_evolution: string;
   image: string;
-  types: string[];
-  abilities: string[];
+  image_treemap: string;
 };
 
 export default function QuizPage() {
-  const [scene, setScene] = useState(0);
-  const [difficulty, setDifficulty] = useState(0);
+  const [allQuizData, setAllQuizData] = useState<QuizItem[]>([]);
   const [quizList, setQuizList] = useState<QuizItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
@@ -21,8 +35,15 @@ export default function QuizPage() {
   const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
-    const shuffled = [...quizData].sort(() => 0.5 - Math.random());
-    setQuizList(shuffled.slice(0, 10)); // ランダムに10問
+    fetch('/data/pokemon_data.jsonl')
+    .then((res) => res.text())
+    .then((text) => {
+      const lines = text.trim().split('\n');
+      const parsed: QuizItem[] = lines.map((line) => JSON.parse(line));
+      const shuffled = parsed.sort(() => 0.5 - Math.random());
+      setAllQuizData(parsed); // ← ここを追加
+      setQuizList(shuffled.slice(0, 10));
+    });
   }, []);
 
   const current = quizList[currentIndex];
@@ -44,68 +65,6 @@ export default function QuizPage() {
     setShowAnswer(false);
   };
 
-  const difficulty_monsterBall = () => {
-    setDifficulty(1);
-    setScene(1);
-  };
-
-  const difficulty_superBall = () => {
-    setDifficulty(2);
-    setScene(1);
-  };
-
-  const difficulty_hyperBall = () => {
-    setDifficulty(3);
-    setScene(1);
-  };
-
-  const difficulty_masterBall = () => {
-    setDifficulty(4);
-    setScene(1);
-  };
-
-  if (scene == 0) {
-    return (
-      
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
-    <div className="w-full max-w-md text-center">
-      <h1 className="text-xl font-bold mb-4">ポケモン色彩クイズ</h1>
-      <div className="grid grid-cols-3">
-        <div></div>
-        <div className="flex flex-col justify-center gap-2">
-          <button
-            onClick={difficulty_monsterBall}
-            className="bg-red-700 text-white py-2 rounded hover:bg-red-800"
-          >
-            モンスターボール級
-          </button>
-          <button
-            onClick={difficulty_superBall}
-            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          >
-            スーパーボール級
-          </button>
-          <button
-            onClick={difficulty_hyperBall}
-            className="bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700"
-          >
-            ハイパーボール級
-          </button>
-          <button
-            onClick={difficulty_masterBall}
-            className="bg-purple-600 text-white py-2 rounded hover:bg-purple-700"
-          >
-            マスターボール級
-          </button>
-        </div>
-      </div>
-        
-    </div>
-  </div>
-
-    )
-  }
-
   if (quizList.length === 0) {
     return <div className="min-h-screen flex items-center justify-center">読み込み中...</div>;
   }
@@ -116,7 +75,7 @@ export default function QuizPage() {
         <h1 className="text-2xl font-bold mb-4">クイズ終了！🎉</h1>
         <button
           onClick={() => {
-            const reshuffled = [...quizData].sort(() => 0.5 - Math.random());
+            const reshuffled = [...allQuizData].sort(() => 0.5 - Math.random());
             setQuizList(reshuffled.slice(0, 10));
             setCurrentIndex(0);
             setResult(null);
@@ -138,7 +97,7 @@ export default function QuizPage() {
         <p className="mb-2 text-gray-600">この画像のポケモンはだれ？</p>
 
         <img
-          src={`/pokemon_treemaps/${current.image}`}
+          src={`/pokemon_treemaps/${current.image_treemap}`}
           alt={`クイズ画像 ${currentIndex + 1}`}
         />
 
@@ -151,14 +110,12 @@ export default function QuizPage() {
               placeholder="ここにポケモンの名前を入力"
               className="w-full p-2 border rounded mb-4"
             />
-            <center>
             <button
               onClick={handleCheck}
-              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-blue-500 text-background gap-2 hover:bg-blue-600 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               答え合わせ
             </button>
-            </center>
           </>
         ) : (
           <>
@@ -167,8 +124,11 @@ export default function QuizPage() {
             </div>
             <div className="text-left mt-4 space-y-2">
               <p><strong>名前:</strong> {current.name}</p>
-              <p><strong>タイプ:</strong> {current.types.join(' / ')}</p>
-              <p><strong>とくせい:</strong> {current.abilities.join(' / ')}</p>
+              <p><strong>タイプ:</strong> {[current.type_1, current.type_2].filter(Boolean).join(' / ')}</p>
+              <p><strong>とくせい:</strong> {
+              [current.tokusei_1, current.tokusei_2, current.tokusei_3, current.tokusei_4]
+              .filter(Boolean).join(' / ')
+              }</p>
             </div>
             <button
               onClick={handleNext}
