@@ -85,9 +85,9 @@ export default function QuizPage() {
 
       <h1 className="place-items-center text-xl font-bold">ポケモン色彩クイズ</h1>
 
-      <div className="grid grid-cols-3">
+      <div className="grid grid-cols-5">
         <div></div>
-        <div className="flex flex-col justify-center gap-2">
+        <div className="col-span-3 flex flex-col justify-center gap-2">
           <button
             onClick={() => {
               setDifficulty(1);
@@ -125,6 +125,7 @@ export default function QuizPage() {
             マスターボール級
           </button>
         </div>
+        <div></div>
       </div>
 
       <div className="flex flex-row justify-center gap-2">
@@ -176,13 +177,13 @@ export default function QuizPage() {
   }
 
   return (
-    <div className="grid grid-rows-4 h-screen bg-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md text-center">
+    <div className="grid grid-rows-20 h-screen bg-white flex items-center justify-center p-4">
+      <div className="row-span-3 w-full max-w-md text-center">
         <h1 className="text-xl font-bold mb-4">ポケモン色彩クイズ {currentIndex + 1} / 10</h1>
         <p className="mb-2 text-gray-600">この画像のポケモンはだれ？</p>
 
       </div>
-      <div className="h-full max-w-md text-center mx-auto">
+      <div className="row-span-5 h-full max-w-md text-center mx-auto">
         <img
           src={`/pokemon_treemaps/${current.image_treemap}`}
           alt={`クイズ画像 ${currentIndex + 1}`}
@@ -190,7 +191,7 @@ export default function QuizPage() {
         />
       </div>
 
-      <div className="row-span-2 h-full max-w-md text-center">
+      <div className="row-span-12 h-full max-w-md text-center">
         {!showAnswer ? (
           <>
             <input
