@@ -28,8 +28,8 @@ type QuizItem = {
 
 const area_button_color = (on_off: boolean) => {
   return on_off ? 
-      "bg-[#0044BB] text-white py-2 rounded hover:bg-[#002299]"
-    : "bg-[#DDDDDD] text-black py-2 rounded hover:bg-[#BBBBBB]"
+      "bg-[#0044BB] text-white px-4 py-2 rounded hover:bg-[#002299]"
+    : "bg-[#DDDDDD] text-black px-4 py-2 rounded hover:bg-[#BBBBBB]"
 }
 
 export default function QuizPage() {
@@ -80,7 +80,7 @@ export default function QuizPage() {
   if (scene == "title") {
     return (
       
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="w-screen h-screen bg-white flex items-center justify-center p-4">
     <div className="grid grid-rows-4 items-center w-full max-w-md text-center">
 
       <h1 className="place-items-center text-xl font-bold">ポケモン色彩クイズ</h1>
@@ -127,7 +127,7 @@ export default function QuizPage() {
         </div>
       </div>
 
-      <div className="flex flex-col justify-center gap-2">
+      <div className="flex flex-row justify-center gap-2">
         {area_names.map((area_name, index) => (
           <button
             key={index}
@@ -151,12 +151,12 @@ export default function QuizPage() {
   }
 
   if (quizList.length === 0) {
-    return <div className="min-h-screen flex items-center justify-center">読み込み中...</div>;
+    return <div className="w-screen h-screen flex items-center justify-center">読み込み中...</div>;
   }
 
   if (currentIndex >= quizList.length) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-center p-4">
+      <div className="w-screen h-screen flex flex-col items-center justify-center text-center p-4">
         <h1 className="text-2xl font-bold mb-4">クイズ終了！🎉</h1>
         <button
           onClick={() => {
@@ -176,16 +176,21 @@ export default function QuizPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="grid grid-rows-4 h-screen bg-white flex items-center justify-center p-4">
       <div className="w-full max-w-md text-center">
         <h1 className="text-xl font-bold mb-4">ポケモン色彩クイズ {currentIndex + 1} / 10</h1>
         <p className="mb-2 text-gray-600">この画像のポケモンはだれ？</p>
 
+      </div>
+      <div className="h-full max-w-md text-center mx-auto">
         <img
           src={`/pokemon_treemaps/${current.image_treemap}`}
           alt={`クイズ画像 ${currentIndex + 1}`}
+          className="h-full max-w-md object-cover"
         />
+      </div>
 
+      <div className="row-span-2 h-full max-w-md text-center">
         {!showAnswer ? (
           <>
             <input
@@ -203,29 +208,34 @@ export default function QuizPage() {
             </button>
           </>
         ) : (
-          <>
-            <div className={`mt-4 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
-              {result === 'correct' ? '正解！🎉' : `不正解… 正解は「${current.name}」でした`}
+          <div className='h-[calc(100vh/2)] grid grid-rows-2 flex items-center justify-center'>
+            <div className='h-[calc(100vh/4)] max-w-md mx-auto'>
               <img
-              src={`/pokemon_images/${current.image}`}
-              alt={`クイズ画像 ${currentIndex + 1}`}
+                src={`/pokemon_images/${current.image}`}
+                alt={`クイズ画像 ${currentIndex + 1}`}
+                className="h-full object-contain  mx-auto"
               />
             </div>
-            <div className="text-left mt-4 space-y-2">
-              <p><strong>名前:</strong> {current.name}</p>
-              <p><strong>タイプ:</strong> {[current.type_1, current.type_2].filter(Boolean).join(' / ')}</p>
-              <p><strong>とくせい:</strong> {
-              [current.tokusei_1, current.tokusei_2, current.tokusei_3, current.tokusei_4]
-              .filter(Boolean).join(' / ')
-              }</p>
+            <div className='h-[calc(100vh/4)] grid grid-rows-3 flex items-center justify-center text-center'>
+              <span className={`mt-4 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
+              {result === 'correct' ? '正解！🎉' : `不正解… 正解は「${current.name}」でした`}
+              </span>
+              <div className="text-left mt-4 space-y-2">
+                <p><strong>名前:</strong> {current.name}</p>
+                <p><strong>タイプ:</strong> {[current.type_1, current.type_2].filter(Boolean).join(' / ')}</p>
+                <p><strong>とくせい:</strong> {
+                [current.tokusei_1, current.tokusei_2, current.tokusei_3, current.tokusei_4]
+                .filter(Boolean).join(' / ')
+                }</p>
+              </div>
+              <button
+                onClick={handleNext}
+                className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              >
+                次の問題へ
+              </button>
             </div>
-            <button
-              onClick={handleNext}
-              className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            >
-              次の問題へ
-            </button>
-          </>
+          </div>
         )}
       </div>
     </div>
