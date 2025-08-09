@@ -44,6 +44,7 @@ export default function QuizPage() {
   const [userAnswer, setUserAnswer] = useState('');
   const [result, setResult] = useState<'correct' | 'wrong' | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [countCorrect, setCountCorrect] = useState(0);
 
   useEffect(() => {
     fetch('/data/pokemon_data.jsonl')
@@ -56,6 +57,7 @@ export default function QuizPage() {
       setQuizList(shuffled.slice(0, 10));
     });
   }, []);
+
   const area_names = ["カントー", "ジョウト", "ホウエン"];
 
   const current = quizList[currentIndex];
@@ -64,6 +66,7 @@ export default function QuizPage() {
     if (userAnswer.trim() === '') return;
     if (userAnswer.trim() === current.name) {
       setResult('correct');
+      setCountCorrect((prev) => prev + 1);
     } else {
       setResult('wrong');
     }
@@ -158,7 +161,8 @@ export default function QuizPage() {
       if (currentIndex >= quizList.length) {
         return (
           <div className="w-screen h-screen flex flex-col items-center justify-center text-center p-4">
-            <h1 className="text-2xl font-bold mb-4">クイズ終了！🎉</h1>
+            <h1 className="text-2xl font-bold mb-4">クイズ終了！</h1>
+            <h1 className="text-2xl font-bold mb-4">10問中 {countCorrect}問 正解！</h1>
             <button
               onClick={() => {
                 const reshuffled = [...allQuizData].sort(() => 0.5 - Math.random());
@@ -214,7 +218,7 @@ export default function QuizPage() {
                 <div className='h-[calc(100vh/4)] max-w-md mx-auto'>
                   <img
                     src={`/pokemon_images/${current.image}`}
-                    alt={`クイズ画像 ${currentIndex + 1}`}
+                    alt={`正解画像 ${currentIndex + 1}`}
                     className="h-full object-contain  mx-auto"
                   />
                 </div>
