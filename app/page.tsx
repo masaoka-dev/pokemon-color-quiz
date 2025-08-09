@@ -55,6 +55,9 @@ export default function QuizPage() {
     String.fromCharCode(ch.charCodeAt(0) + 0x60)
   );
 
+  const getFullName = (p: QuizItem) => 
+  p.sub_name ? `${p.name}（${p.sub_name}）` : p.name;
+
   useEffect(() => {
     fetch('/data/pokemon_data.jsonl')
     .then((res) => res.text())
@@ -93,11 +96,7 @@ export default function QuizPage() {
   const handleCheck = () => {
     if (userAnswer.trim() === '') return;
 
-    const correctName = current.sub_name
-    ? `${current.name}（${current.sub_name}）`
-    : current.name;
-
-    if (userAnswer.trim() === correctName) {
+    if (userAnswer.trim() === getFullName(current)) {
       setResult('correct');
       setCountCorrect((prev) => prev + 1);
     } else {
@@ -275,10 +274,10 @@ export default function QuizPage() {
                 </div>
                 <div className='h-[calc(100vh/4)] grid grid-rows-3 flex items-center justify-center text-center'>
                   <span className={`mt-4 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
-                  {result === 'correct' ? '正解！🎉' : `不正解… 正解は「${current.name}」でした`}
+                  {result === 'correct' ? '正解！🎉' : `不正解… 正解は「${getFullName(current)}」でした`}
                   </span>
                   <div className="text-left mt-4 space-y-2">
-                    <p><strong>名前:</strong> {current.name}</p>
+                    <p><strong>名前:</strong> {getFullName(current)}</p>
                     <p><strong>タイプ:</strong> {[current.type_1, current.type_2].filter(Boolean).join(' / ')}</p>
                     <p><strong>とくせい:</strong> {
                     [current.tokusei_1, current.tokusei_2, current.tokusei_3, current.tokusei_4]
