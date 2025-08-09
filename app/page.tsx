@@ -46,17 +46,45 @@ export default function QuizPage() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [countCorrect, setCountCorrect] = useState(0);
 
+  const [nameList, setNameList] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+
+  //ひらがなtoカタカナ
+  const toKatakana = (str: string) =>
+  str.replace(/[\u3041-\u3096]/g, ch =>
+    String.fromCharCode(ch.charCodeAt(0) + 0x60)
+  );
+
   useEffect(() => {
     fetch('/data/pokemon_data.jsonl')
     .then((res) => res.text())
     .then((text) => {
       const lines = text.trim().split('\n');
       const parsed: QuizItem[] = lines.map((line) => JSON.parse(line));
+      
+      const namesWithSub = parsed.map(p =>
+        p.sub_name ? `${p.name}（${p.sub_name}）` : p.name
+      );
+      setNameList(namesWithSub);
+
       const shuffled = parsed.sort(() => 0.5 - Math.random());
       setAllQuizData(parsed); // ← ここを追加
       setQuizList(shuffled.slice(0, 10));
     });
   }, []);
+
+  const handleInputChange = (value: string) => {
+  setUserAnswer(value);
+  const katakanaInput = toKatakana(value.trim());
+  if (katakanaInput === '') {
+    setSuggestions([]);
+    return;
+  }
+  const filtered = nameList.filter(name =>
+    name.startsWith(katakanaInput)
+  );
+  setSuggestions(filtered);
+};
 
   const area_names = ["カントー", "ジョウト", "ホウエン"];
 
@@ -64,7 +92,12 @@ export default function QuizPage() {
 
   const handleCheck = () => {
     if (userAnswer.trim() === '') return;
-    if (userAnswer.trim() === current.name) {
+
+    const correctName = current.sub_name
+    ? `${current.name}（${current.sub_name}）`
+    : current.name;
+
+    if (userAnswer.trim() === correctName) {
       setResult('correct');
       setCountCorrect((prev) => prev + 1);
     } else {
@@ -198,21 +231,39 @@ export default function QuizPage() {
 
           <div className="row-span-12 h-full max-w-md text-center">
             {!showAnswer ? (
-              <>
+              <div className='relative'>
                 <input
                   type="text"
                   value={userAnswer}
-                  onChange={(e) => setUserAnswer(e.target.value)}
+                  onChange={(e) => handleInputChange(e.target.value)}
                   placeholder="ここにポケモンの名前を入力"
                   className="w-full p-2 border rounded mb-4"
                 />
+                
+                {suggestions.length > 0 && (
+                  <ul className="absolute z-10 w-full border rounded bg-white text-left mb-4 max-h-40 overflow-y-auto">
+                    {suggestions.map((s, idx) => (
+                      <li
+                        key={idx}
+                        onClick={() => {
+                          setUserAnswer(s);
+                          setSuggestions([]);
+                        }}
+                        className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                      >
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
                 <button
                   onClick={handleCheck}
                   className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
                   答え合わせ
                 </button>
-              </>
+              </div>
             ) : (
               <div className='h-[calc(100vh/2)] grid grid-rows-2 flex items-center justify-center'>
                 <div className='h-[calc(100vh/4)] max-w-md mx-auto'>
