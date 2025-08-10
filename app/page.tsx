@@ -204,6 +204,7 @@ export default function QuizPage() {
                 setShowAnswer(false);
                 setUserAnswer('');
                 setScene("title");
+                setCountCorrect(0);
               }}
               className="mt-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
