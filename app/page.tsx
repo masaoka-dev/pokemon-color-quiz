@@ -32,6 +32,8 @@ const area_button_color = (on_off: boolean) => {
     : "bg-[#DDDDDD] text-black px-4 py-2 rounded hover:bg-[#BBBBBB]"
 }
 
+
+
 export default function QuizPage() {
   const [scene, setScene] = useState("title");
   const [difficulty, setDifficulty] = useState(0);
@@ -49,7 +51,21 @@ export default function QuizPage() {
   const [nameList, setNameList] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  //ひらがなtoカタカナ
+  const parse_jsonl = (text: string) => {
+    const lines = text.trim().split('\n');
+    const parsed: QuizItem[] = lines.map((line) => JSON.parse(line));
+    
+    const namesWithSub = parsed.map(p =>
+      p.sub_name ? `${p.name}（${p.sub_name}）` : p.name
+    );
+    setNameList(namesWithSub);
+  
+    const shuffled = parsed.sort(() => 0.5 - Math.random());
+    setAllQuizData(parsed);
+    setQuizList(shuffled.slice(0, 10));
+  }
+
+  // ひらがなtoカタカナ
   const toKatakana = (str: string) =>
   str.replace(/[\u3041-\u3096]/g, ch =>
     String.fromCharCode(ch.charCodeAt(0) + 0x60)
@@ -61,19 +77,7 @@ export default function QuizPage() {
   useEffect(() => {
     fetch('/data/pokemon_data.jsonl')
     .then((res) => res.text())
-    .then((text) => {
-      const lines = text.trim().split('\n');
-      const parsed: QuizItem[] = lines.map((line) => JSON.parse(line));
-      
-      const namesWithSub = parsed.map(p =>
-        p.sub_name ? `${p.name}（${p.sub_name}）` : p.name
-      );
-      setNameList(namesWithSub);
-
-      const shuffled = parsed.sort(() => 0.5 - Math.random());
-      setAllQuizData(parsed); // ← ここを追加
-      setQuizList(shuffled.slice(0, 10));
-    });
+    .then(parse_jsonl);
   }, []);
 
   const handleInputChange = (value: string) => {
