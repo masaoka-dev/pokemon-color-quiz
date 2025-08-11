@@ -37,7 +37,8 @@ const area_button_color = (on_off: boolean) => {
 export default function QuizPage() {
   const [scene, setScene] = useState("title");
   const [difficulty, setDifficulty] = useState(0);
-  const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
+  // const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
+  const [areasSelected, setAreasSelected] = useState([true, true, true, false, false, false, false, false, false, false]);
   const [options, setOptionss] = useState([true, true]);
   
   const [allQuizData, setAllQuizData] = useState<QuizItem[]>([]);
@@ -61,9 +62,35 @@ export default function QuizPage() {
     setNameList(namesWithSub);
   
     const shuffled = parsed.sort(() => 0.5 - Math.random());
-    setAllQuizData(parsed);
-    setQuizList(shuffled.slice(0, 10));
-  }
+      setAllQuizData(parsed);
+      setQuizList(shuffled.slice(0, 10));
+    }
+
+    const initialize_game = (difficulty: number) => {
+      setDifficulty(difficulty);
+      setScene("game");
+      fetchData();
+    }
+
+    const fetchData = async () => {
+      try {
+        const configStr = "area: =[1, 2]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0";
+        const res = await fetch(`/api/create_group`,{
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ config: configStr }),
+      });
+        // if (!res.ok) {
+        //   throw new Error(`HTTP error. status: ${res.status}`);
+        // }
+        
+        const data = await res.text();
+        parse_jsonl(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
 
   // ひらがなtoカタカナ
   const toKatakana = (str: string) =>
@@ -130,8 +157,7 @@ export default function QuizPage() {
           <div className="col-span-3 flex flex-col justify-center gap-2">
             <button
               onClick={() => {
-                setDifficulty(1);
-                setScene("game");
+                initialize_game(1);
               }}
               className="bg-red-700 text-white py-2 rounded hover:bg-red-800"
             >
@@ -139,8 +165,7 @@ export default function QuizPage() {
             </button>
             <button
               onClick={() => {
-                setDifficulty(2);
-                setScene("game");
+                initialize_game(2);
               }}
               className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
             >
@@ -148,8 +173,7 @@ export default function QuizPage() {
             </button>
             <button
               onClick={() => {
-                setDifficulty(3);
-                setScene("game");
+                initialize_game(3);
               }}
               className="bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700"
             >
@@ -157,8 +181,7 @@ export default function QuizPage() {
             </button>
             <button
               onClick={() => {
-                setDifficulty(4);
-                setScene("game");
+                initialize_game(4);
               }}
               className="bg-purple-600 text-white py-2 rounded hover:bg-purple-700"
             >

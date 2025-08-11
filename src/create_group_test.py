@@ -1,29 +1,34 @@
 """
-    This script creates a group of pokemons and returns jsonl of the group.
+    This script creates a group of pokemons and returns the list of the group.
+    The conditions for creation are received as the argument '-c' or '--config'.
+    When not set the argument, this refers to `src/tmp/confing`.
 
-    An example of `config` is as follows (replace line breaks into '\n'):
+    An example of `config` is as follows:
 
         area: =[1, 3, 4]
         is_final_evolution: =true
-        omosa: >=6.0, <=50.0
+        omosa: <=6.0, >=50.0
 
-    The above example refers to Pokemons from Gen 1, Gen 3, and Gen 4 that are final evolutions and have a weight between 6.0 and 50.0.
+    Usage: python3 src/create_group_test.py [-c {config}]
 """
 
-from flask import Flask, request, Response
 import json
-import os
+import argparse
 import sys
 
-app = Flask(__name__)
-
-@app.route('/api/create_group', methods=['GET', 'POST'])
 def create_group():
-    if request.method == 'POST':
-        data = request.get_json() or {}
-        raw_config = data.get('config', '')
-    else:
-        raw_config = request.args.get('config', '')
+    
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-c", "--config", default="")
+
+    args = parser.parse_args()
+
+
+    key_int     = ["id", "no", "sub", "area", "tokusei_1", "tokusei_2", "tokusei_3", "type_1", "type_2", "mega_flg", "genshi_flg", "kyodai_flg"]
+    key_float   = ["omosa", "takasa"]
+    key_boolean = ["is_final_evolution"]
+
 
     def compare_data(data1, data2, relation) -> bool:
         if relation == "=":
@@ -42,21 +47,19 @@ def create_group():
         return int(str(target).replace(",", "")) if config_key in key_int else float(str(target).replace(",", "")) if config_key in key_float else True if config_key in key_boolean and str(target).lower() == "true" else False if config_key in key_boolean and str(target).lower() == "false" else target
 
 
-    key_int     = ["id", "no", "sub", "area", "tokusei_1", "tokusei_2", "tokusei_3", "type_1", "type_2", "mega_flg", "genshi_flg", "kyodai_flg"]
-    key_float   = ["omosa", "takasa"]
-    key_boolean = ["is_final_evolution"]
-
-
-    raw_config = raw_config.replace("\\n", "\n")
+    # Get config
+    raw_config = args.config
+    if raw_config == "":
+        with open("src/tmp/config", "r") as f:
+            raw_config = f.read()
+    else: 
+        raw_config = raw_config.replace("\\n", "\n")
 
     config_list = raw_config.split("\n")
     config_list = [c for c in config_list if c != ""]
 
-    print("Got config as follows:")
-    print(config_list)
 
-    file_path = os.path.join(os.path.dirname(__file__), "..", "public", "data", "pokemon_data.jsonl")
-    with open(file_path, "r") as f:
+    with open("public/data/pokemon_data.jsonl", "r") as f:
         raw_data = [json.loads(l) for l in f.readlines()]
 
 
@@ -93,14 +96,14 @@ def create_group():
             dropout_all |= dropout_oneline
 
 
-    created_group = [l for i, l in enumerate(raw_data) if not i in dropout_all]
-    jsonl_str = "\n".join(json.dumps(item, ensure_ascii=False) for item in created_group)
-    print("Returned: ")
-    print(jsonl_str)
-    return Response(
-        jsonl_str,
-        mimetype="application/x-ndjson"
-    )
+    created_group = (l for i, l in enumerate(raw_data) if not i in dropout_all)
+
+    # Output
+    with open("src/data/pokemon_data_group_test.jsonl", "w") as f:
+        f.writelines([f"{json.dumps(l, ensure_ascii=False)}\n" for l in created_group])
+    return created_group
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    create_group()
+    
