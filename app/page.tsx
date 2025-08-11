@@ -28,8 +28,8 @@ type QuizItem = {
 
 const area_button_color = (on_off: boolean) => {
   return on_off ? 
-      "bg-[#0044BB] text-white px-4 py-2 rounded hover:bg-[#002299]"
-    : "bg-[#DDDDDD] text-black px-4 py-2 rounded hover:bg-[#BBBBBB]"
+      "bg-[#0044BB] text-white px-1 py-1 rounded hover:bg-[#002299]"
+    : "bg-[#DDDDDD] text-black px-1 py-1 rounded hover:bg-[#BBBBBB]"
 }
 
 
@@ -73,16 +73,19 @@ export default function QuizPage() {
     }
 
     const fetchData = async () => {
+      const area_bool2int = areasSelected.map((area, index) => {
+        if (area)
+          return index + 1;
+        return 0;
+      });
+      const area_str = area_bool2int.join(", ");
+      const configStr = `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0`;
       try {
-        const configStr = "area: =[1, 2]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0";
         const res = await fetch(`/api/create_group`,{
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ config: configStr }),
       });
-        // if (!res.ok) {
-        //   throw new Error(`HTTP error. status: ${res.status}`);
-        // }
         
         const data = await res.text();
         parse_jsonl(data);
@@ -120,7 +123,7 @@ export default function QuizPage() {
   setSuggestions(filtered);
 };
 
-  const area_names = ["カントー", "ジョウト", "ホウエン"];
+  const area_names = ["カントー", "ジョウト", "ホウエン", "シンオウ", "イッシュ", "カロス", "アローラ", "ガラル", "ヒスイ", "パルデア"];
 
   const current = quizList[currentIndex];
 
@@ -191,7 +194,7 @@ export default function QuizPage() {
           <div></div>
         </div>
 
-        <div className="flex flex-row justify-center gap-2">
+        <div className="grid grid-rows-3 grid-cols-4 justify-center gap-1">
           {area_names.map((area_name, index) => (
             <button
               key={index}
