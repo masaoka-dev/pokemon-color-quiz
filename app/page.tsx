@@ -15,7 +15,6 @@ type QuizItem = {
   tokusei_1: string;
   tokusei_2: string;
   tokusei_3: string;
-  tokusei_4: string;
   type_1: string;
   type_2: string;
   mega_flg: string;
@@ -151,10 +150,12 @@ export default function QuizPage() {
   const type_2_name = surroundingData ? surroundingData.type[type_2_key] : "undefined";
   const area_key = current ? current.area : "1";
   const area_name = surroundingData ? surroundingData.area[area_key] : "undefined";
-  const tokusei_1_key = current ? current.tokusei_1 : "1";
+  const tokusei_1_key = current ? current.tokusei_1 : "0";
   const tokusei_1_name = surroundingData ? surroundingData.tokusei[tokusei_1_key] : "undefined";
-  const tokusei_2_key = current ? current.tokusei_2 : "1";
+  const tokusei_2_key = current ? current.tokusei_2 : "0";
   const tokusei_2_name = surroundingData ? surroundingData.tokusei[tokusei_2_key] : "undefined";
+  const tokusei_3_key = current ? current.tokusei_3 : "0";
+  const tokusei_3_name = surroundingData ? surroundingData.tokusei[tokusei_3_key] : "undefined";
 
 
 
@@ -340,7 +341,7 @@ export default function QuizPage() {
                   <div className="text-left mt-4 space-y-2">
                     <p><strong>名前:</strong> {getFullName(current)}</p>
                     <p><strong>タイプ:</strong> {[type_1_name, type_2_name].filter(Boolean).join(' / ')}</p>
-                    <p><strong>とくせい:</strong> {[tokusei_1_name, tokusei_2_name].filter(Boolean).join(' / ')}</p>
+                    <p><strong>とくせい:</strong> {[tokusei_1_name, tokusei_2_name, tokusei_3_name].filter(Boolean).join(' / ')}</p>
                   </div>
                   <button
                     onClick={handleNext}
