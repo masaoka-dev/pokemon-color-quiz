@@ -26,6 +26,16 @@ type QuizItem = {
   image_treemap: string;
 };
 
+type SurroundingData = {
+  type: Record<string, string>;
+  area: Record<string, string>;
+  tokusei: Record<string, string>;
+  tokusei_obj: Record<string, string>[];
+  range_takasa: Record<string, string>;
+  range_omosa: Record<string, string>;
+  min_max_zukan_no: Record<string, number>;
+};
+
 const area_button_color = (on_off: boolean) => {
   return on_off ? 
       "bg-[#0044BB] text-white px-1 py-1 rounded hover:bg-[#002299]"
@@ -52,6 +62,8 @@ export default function QuizPage() {
   const [nameList, setNameList] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
+  const [surroundingData, setSurroundingData] = useState<SurroundingData | null>(null);
+
   const parse_jsonl = (text: string) => {
     const lines = text.trim().split('\n');
     const parsed: QuizItem[] = lines.map((line) => JSON.parse(line));
@@ -64,36 +76,37 @@ export default function QuizPage() {
     const shuffled = parsed.sort(() => 0.5 - Math.random());
       setAllQuizData(parsed);
       setQuizList(shuffled.slice(0, 10));
-    }
+  }
 
-    const initialize_game = (difficulty: number) => {
-      setDifficulty(difficulty);
-      setScene("game");
-      fetchData();
-    }
+  const initialize_game = (difficulty: number) => {
+    setScene("load");
+    setDifficulty(difficulty);
+    fetchData();
+    setScene("game");
+  }
 
-    const fetchData = async () => {
-      const area_bool2int = areasSelected.map((area, index) => {
-        if (area)
-          return index + 1;
-        return 0;
+  const fetchData = async () => {
+    const area_bool2int = areasSelected.map((area, index) => {
+      if (area)
+        return index + 1;
+      return 0;
+    });
+    const area_str = area_bool2int.join(", ");
+    const configStr = `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0`;
+    try {
+      const res = await fetch(`/api/create_group`,{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ config: configStr }),
       });
-      const area_str = area_bool2int.join(", ");
-      const configStr = `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0`;
-      try {
-        const res = await fetch(`/api/create_group`,{
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ config: configStr }),
-      });
-        
-        const data = await res.text();
-        parse_jsonl(data);
-      } catch (err) {
-        console.error(err);
-      }
+      
+      const data = await res.text();
+      parse_jsonl(data);
+    } catch (err) {
+      console.error(err);
     }
-
+  }
+  
 
   // ひらがなtoカタカナ
   const toKatakana = (str: string) =>
@@ -108,6 +121,10 @@ export default function QuizPage() {
     fetch('/data/pokemon_data.jsonl')
     .then((res) => res.text())
     .then(parse_jsonl);
+
+    fetch("/data/type_area_tokusei_data.json")
+      .then((res) => res.json())
+      .then((data) => setSurroundingData(data));
   }, []);
 
   const handleInputChange = (value: string) => {
@@ -126,6 +143,20 @@ export default function QuizPage() {
   const area_names = ["カントー", "ジョウト", "ホウエン", "シンオウ", "イッシュ", "カロス", "アローラ", "ガラル", "ヒスイ", "パルデア"];
 
   const current = quizList[currentIndex];
+
+  // type, area, tokuseiなどの周辺情報の名称を取得
+  const type_1_key = current ? current.type_1 : "1";
+  const type_1_name = surroundingData ? surroundingData.type[type_1_key] : "undefined";
+  const type_2_key = current ? current.type_2 : "1";
+  const type_2_name = surroundingData ? surroundingData.type[type_2_key] : "undefined";
+  const area_key = current ? current.area : "1";
+  const area_name = surroundingData ? surroundingData.area[area_key] : "undefined";
+  const tokusei_1_key = current ? current.tokusei_1 : "1";
+  const tokusei_1_name = surroundingData ? surroundingData.tokusei[tokusei_1_key] : "undefined";
+  const tokusei_2_key = current ? current.tokusei_2 : "1";
+  const tokusei_2_name = surroundingData ? surroundingData.tokusei[tokusei_2_key] : "undefined";
+
+
 
   const handleCheck = () => {
     if (userAnswer.trim() === '') return;
@@ -215,11 +246,10 @@ export default function QuizPage() {
     </div>
 
       )
-    case "game": 
-      if (quizList.length === 0) {
-        return <div className="w-screen h-screen flex items-center justify-center">読み込み中...</div>;
-      }
+    case "load": 
+      return <div className="w-screen h-screen flex items-center justify-center">読み込み中...</div>;
 
+    case "game": 
       if (currentIndex >= quizList.length) {
         return (
           <div className="w-screen h-screen flex flex-col items-center justify-center text-center p-4">
@@ -309,11 +339,8 @@ export default function QuizPage() {
                   </span>
                   <div className="text-left mt-4 space-y-2">
                     <p><strong>名前:</strong> {getFullName(current)}</p>
-                    <p><strong>タイプ:</strong> {[current.type_1, current.type_2].filter(Boolean).join(' / ')}</p>
-                    <p><strong>とくせい:</strong> {
-                    [current.tokusei_1, current.tokusei_2, current.tokusei_3, current.tokusei_4]
-                    .filter(Boolean).join(' / ')
-                    }</p>
+                    <p><strong>タイプ:</strong> {[type_1_name, type_2_name].filter(Boolean).join(' / ')}</p>
+                    <p><strong>とくせい:</strong> {[tokusei_1_name, tokusei_2_name].filter(Boolean).join(' / ')}</p>
                   </div>
                   <button
                     onClick={handleNext}
