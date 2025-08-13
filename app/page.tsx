@@ -155,7 +155,7 @@ export default function QuizPage() {
   const tokusei_2_key = current ? current.tokusei_2 : "0";
   const tokusei_2_name = surroundingData ? surroundingData.tokusei[tokusei_2_key] : "undefined";
   const tokusei_3_key = current ? current.tokusei_3 : "0";
-  const tokusei_3_name = surroundingData ? surroundingData.tokusei[tokusei_3_key] : "undefined";
+  const tokusei_3_name = surroundingData ? (tokusei_3_key != "0" ? surroundingData.tokusei[tokusei_3_key] : "なし") : "undefined";
 
 
 
@@ -253,7 +253,7 @@ export default function QuizPage() {
     case "game": 
       if (currentIndex >= quizList.length) {
         return (
-          <div className="w-screen h-screen flex flex-col items-center justify-center text-center p-4">
+          <div className="w-screen h-screen flex flex-col items-center justify-center text-center py-8">
             <h1 className="text-2xl font-bold mb-4">クイズ終了！</h1>
             <h1 className="text-2xl font-bold mb-4">10問中 {countCorrect}問 正解！</h1>
             <button
@@ -276,8 +276,8 @@ export default function QuizPage() {
       }
 
       return (
-        <div className="grid grid-rows-20 h-screen bg-white flex items-center justify-center p-4">
-          <div className="row-span-3 w-full max-w-md text-center">
+        <div className="grid grid-rows-20 h-screen bg-white flex items-center justify-center py-10">
+          <div className="row-span-2 w-full max-w-md text-center">
             <h1 className="text-xl font-bold mb-4">ポケモン色彩クイズ {currentIndex + 1} / 10</h1>
             <p className="mb-2 text-gray-600">この画像のポケモンはだれ？</p>
 
@@ -290,7 +290,7 @@ export default function QuizPage() {
             />
           </div>
 
-          <div className="row-span-12 h-full max-w-md text-center">
+          <div className="row-span-13 h-full max-w-md text-center">
             {!showAnswer ? (
               <div className='relative'>
                 <input
@@ -334,18 +334,19 @@ export default function QuizPage() {
                     className="h-full object-contain  mx-auto"
                   />
                 </div>
-                <div className='h-[calc(100vh/4)] grid grid-rows-3 flex items-center justify-center text-center'>
-                  <span className={`mt-4 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
+                <div className='h-[calc(100vh/4)] grid grid-rows-4 flex items-center justify-center text-center'>
+                  <span className={`row-span-1 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
                   {result === 'correct' ? '正解！🎉' : `不正解… 正解は「${getFullName(current)}」でした`}
                   </span>
-                  <div className="text-left mt-4 space-y-2">
+                  <div className="row-span-2 text-left space-y-1">
                     <p><strong>名前:</strong> {getFullName(current)}</p>
                     <p><strong>タイプ:</strong> {[type_1_name, type_2_name].filter(Boolean).join(' / ')}</p>
-                    <p><strong>とくせい:</strong> {[tokusei_1_name, tokusei_2_name, tokusei_3_name].filter(Boolean).join(' / ')}</p>
+                    <p><strong>とくせい:</strong> {[tokusei_1_name, tokusei_2_name].filter(Boolean).join(' / ')}</p>
+                    <p><strong>かくれとくせい:</strong> {tokusei_3_name}</p>
                   </div>
                   <button
                     onClick={handleNext}
-                    className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    className="row-span-1 mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                   >
                     次の問題へ
                   </button>
