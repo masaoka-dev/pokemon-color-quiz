@@ -91,7 +91,7 @@ export default function QuizPage() {
       return 0;
     });
     const area_str = area_bool2int.join(", ");
-    const configStr = `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0`;
+    const configStr = `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`;
     try {
       const res = await fetch(`/api/create_group`,{
         method: "POST",
