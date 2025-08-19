@@ -20,6 +20,7 @@ type QuizItem = {
   mega_flg: string;
   genshi_flg: string;
   kyodai_flg: string;
+  difficulty_easy_flg: string;
   is_final_evolution: string;
   image: string;
   image_treemap: string;
