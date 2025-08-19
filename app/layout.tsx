@@ -27,6 +27,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <p className="h-[calc(5vh)] w-full text-4xl font-bold text-center bg-[#FFCCCC]"> 
+        ヘッダ</p>
+
         {children}
       </body>
     </html>
