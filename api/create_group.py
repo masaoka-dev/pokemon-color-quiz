@@ -42,7 +42,7 @@ def create_group():
         return int(str(target).replace(",", "")) if config_key in key_int else float(str(target).replace(",", "")) if config_key in key_float else True if config_key in key_boolean and str(target).lower() == "true" else False if config_key in key_boolean and str(target).lower() == "false" else target
 
 
-    key_int     = ["id", "no", "sub", "area", "tokusei_1", "tokusei_2", "tokusei_3", "type_1", "type_2", "mega_flg", "genshi_flg", "kyodai_flg"]
+    key_int     = ["id", "no", "sub", "area", "tokusei_1", "tokusei_2", "tokusei_3", "type_1", "type_2", "mega_flg", "genshi_flg", "kyodai_flg", "difficulty_easy_flg"]
     key_float   = ["omosa", "takasa"]
     key_boolean = ["is_final_evolution"]
 
