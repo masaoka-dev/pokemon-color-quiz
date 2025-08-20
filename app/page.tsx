@@ -182,10 +182,8 @@ export default function QuizPage() {
     case "title":
       return (
         
-      <div className="flex items-center justify-center">
+      <div className="content flex items-center justify-center">
       <div className="grid grid-rows-4 items-center w-full max-w-md text-center">
-
-        <h1 className="place-items-center text-xl font-bold">ポケモン色彩クイズ</h1>
 
         <div className="grid grid-cols-5">
           <div></div>
@@ -279,7 +277,7 @@ export default function QuizPage() {
         <div className="grid grid-rows-20 h-[calc(90vh)] flex items-center justify-center">
           <div className="row-span-2 w-full max-w-md text-center">
             <h1 className="text-xl font-bold mb-4"> {currentIndex + 1} / 10</h1>
-            <p className="mb-2 text-gray-600">この画像のポケモンはだれ？</p>
+            <p className="mb-2 text-gray-600">この色のポケモンはだれ？</p>
 
           </div>
           <div className="row-span-5 h-full max-w-md text-center mx-auto">
@@ -292,7 +290,7 @@ export default function QuizPage() {
 
           <div className="row-span-13 h-full max-w-md text-center">
             {!showAnswer ? (
-              <div className='relative'>
+              <div className='content relative'>
                 <input
                   type="text"
                   value={userAnswer}
@@ -327,6 +325,9 @@ export default function QuizPage() {
               </div>
             ) : (
               <div className='h-[calc(100vh/2)] grid grid-rows-8 flex items-center justify-center'>
+                <span className={`row-span-1 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
+                  {result === 'correct' ? 'せいかい！' : `ざんねん... 正解は${getFullName(current)}でした`}
+                  </span>
                 <button
                     onClick={handleNext}
                     className="row-span-1 mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mx-auto"
@@ -340,17 +341,13 @@ export default function QuizPage() {
                     className="h-full object-contain  mx-auto"
                   />
                 </div>
-                <div className='h-[calc(100vh/4)] row-span-3 grid grid-rows-3 flex items-center justify-center text-center'>
-                  
-                  <span className={`row-span-1 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
-                  {result === 'correct' ? '正解！🎉' : `不正解… 正解は「${getFullName(current)}」でした`}
-                  </span>
+
                   <div className="row-span-2 text-left space-y-1 mx-auto">
                     <p><strong>名前:</strong> {getFullName(current)}</p>
                     <p><strong>タイプ:</strong> {[type_1_name, type_2_name].filter(Boolean).join(' / ')}</p>
                     <p><strong>とくせい:</strong> {[tokusei_1_name, tokusei_2_name].filter(Boolean).join(' / ')}</p>
                     <p><strong>かくれとくせい:</strong> {tokusei_3_name}</p>
-                  </div>
+                  
                 </div>
               </div>
             )}
