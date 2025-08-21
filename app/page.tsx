@@ -81,8 +81,6 @@ export default function QuizPage() {
   const initialize_game = (difficulty: number) => {
     setScene("load");
     setDifficulty(difficulty);
-    fetchData();
-    setScene("game");
   }
 
   const fetchData = async () => {
@@ -252,6 +250,8 @@ export default function QuizPage() {
 
       )
     case "load": 
+      fetchData();
+      setScene("game");
       return <div className="w-screenflex items-center justify-center">読み込み中...</div>;
 
     case "game": 
