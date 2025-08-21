@@ -79,8 +79,8 @@ export default function QuizPage() {
   }
 
   const initialize_game = (difficulty: number) => {
-    setScene("load");
     setDifficulty(difficulty);
+    setScene("load");
   }
 
   const fetchData = async () => {
@@ -108,6 +108,7 @@ export default function QuizPage() {
     } catch (err) {
       console.error(err);
     }
+    setScene("game");
   }
   
 
@@ -188,7 +189,7 @@ export default function QuizPage() {
         
       <div className="content flex items-center justify-center">
       <div className="grid grid-rows-4 items-center w-full max-w-md text-center">
-
+        <div></div>
         <div className="grid grid-cols-5">
           <div></div>
           <div className="col-span-3 flex flex-col justify-center gap-2">
@@ -251,13 +252,15 @@ export default function QuizPage() {
       )
     case "load": 
       fetchData();
-      setScene("game");
-      return <div className="w-screenflex items-center justify-center">読み込み中...</div>;
+      return (
+        <div className="w-screenflex items-center justify-center">
+          <div>読み込み中...</div>
+        </div>);
 
     case "game": 
       if (currentIndex >= quizList.length) {
         return (
-          <div className="w-screen flex flex-col items-center justify-center text-center">
+          <div className="h-[calc(85vh)] w-screen flex flex-col items-center justify-center text-center">
             <h1 className="text-2xl font-bold mb-4">クイズ終了！</h1>
             <h1 className="text-2xl font-bold mb-4">10問中 {countCorrect}問 正解！</h1>
             <button
@@ -338,7 +341,7 @@ export default function QuizPage() {
                     onClick={handleNext}
                     className="row-span-1 mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mx-auto"
                   >
-                    次の問題へ
+                    {currentIndex < 10 - 1 ? '次の問題へ' : '結果を見る'}
                   </button>
                 <div className='h-[calc(100vh/5)] row-span-4 max-w-md mx-auto'>
                   <img
