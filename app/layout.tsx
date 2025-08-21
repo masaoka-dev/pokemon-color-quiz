@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ポケモン色彩クイズ",
-  description: "めざせ！色彩マスター！色だけでポケモンを当てろ！！",
+  title: "ポケモンいろだけクイズ",
+  description: "めざせ！ポケモン色マスター！色だけでポケモンを当てろ！！",
 };
 
 export default function RootLayout({
@@ -27,8 +27,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <p className="h-[calc(5vh)] w-full text-4xl font-bold text-center bg-[#FFCCCC]"> 
-        ヘッダ</p>
+        <p className="h-[calc(5vh)] w-full text-3xl font-bold text-center bg-[#FFCCCC]"> 
+        ポケモンいろだけクイズ</p>
 
         {children}
       </body>
