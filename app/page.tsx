@@ -47,8 +47,8 @@ const area_button_color = (on_off: boolean) => {
 export default function QuizPage() {
   const [scene, setScene] = useState("title");
   const [difficulty, setDifficulty] = useState(0);
-  // const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
-  const [areasSelected, setAreasSelected] = useState([true, true, true, false, false, false, false, false, false, false]);
+  const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
+  // const [areasSelected, setAreasSelected] = useState([true, true, true, false, false, false, false, false, false, false]);
   const [options, setOptionss] = useState([true, true]);
   
   const [allQuizData, setAllQuizData] = useState<QuizItem[]>([]);
@@ -92,7 +92,12 @@ export default function QuizPage() {
       return 0;
     });
     const area_str = area_bool2int.join(", ");
-    const configStr = `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`;
+
+    const configStr = (difficulty === 1) ? `area: =[${area_str}]\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`
+      : (difficulty === 2) ? `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0` 
+      : (difficulty === 3) ? `area: =[${area_str}]\nis_final_evolution: =true` 
+      : `area: =[${area_str}]`;
+
     try {
       const res = await fetch(`/api/create_group`,{
         method: "POST",
