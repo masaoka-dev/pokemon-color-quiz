@@ -47,8 +47,8 @@ const area_button_color = (on_off: boolean) => {
 export default function QuizPage() {
   const [scene, setScene] = useState("title");
   const [difficulty, setDifficulty] = useState(0);
-  // const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
-  const [areasSelected, setAreasSelected] = useState([true, true, true, false, false, false, false, false, false, false]);
+  const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
+  // const [areasSelected, setAreasSelected] = useState([true, true, true, false, false, false, false, false, false, false]);
   const [options, setOptionss] = useState([true, true]);
   
   const [allQuizData, setAllQuizData] = useState<QuizItem[]>([]);
@@ -58,6 +58,8 @@ export default function QuizPage() {
   const [result, setResult] = useState<'correct' | 'wrong' | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [countCorrect, setCountCorrect] = useState(0);
+
+  const [choices,setChoices] = useState<string[]>([]);
 
   const [nameList, setNameList] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -79,10 +81,8 @@ export default function QuizPage() {
   }
 
   const initialize_game = (difficulty: number) => {
-    setScene("load");
     setDifficulty(difficulty);
-    fetchData();
-    setScene("game");
+    setScene("load");
   }
 
   const fetchData = async () => {
@@ -92,7 +92,16 @@ export default function QuizPage() {
       return 0;
     });
     const area_str = area_bool2int.join(", ");
-    const configStr = `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`;
+
+    //モンスターボール級：有名ポケモンのみ　選択肢あり
+    const configStr = (difficulty === 1) ? `area: =[${area_str}]\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`
+    //スーパーボール級：最終進化のみ　メガなし　キョダイなし　選択肢あり
+      : (difficulty === 2) ? `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0` 
+    //ハイパーボール級：全てのポケモン　選択肢あり  
+      : (difficulty === 3) ? `area: =[${area_str}]` 
+    //マスターボール級（その他）：全てのポケモン　選択肢なし
+      : `area: =[${area_str}]`;
+
     try {
       const res = await fetch(`/api/create_group`,{
         method: "POST",
@@ -105,6 +114,7 @@ export default function QuizPage() {
     } catch (err) {
       console.error(err);
     }
+    setScene("game");
   }
   
 
@@ -126,6 +136,26 @@ export default function QuizPage() {
       .then((res) => res.json())
       .then((data) => setSurroundingData(data));
   }, []);
+
+
+  useEffect(() => {
+    if (!current) return;
+
+    if (difficulty === 1 || difficulty === 2 || difficulty === 3) {
+      // 正解
+      const correct = getFullName(current);
+
+      // ランダムにダミーを選ぶ（重複を避ける）
+      const shuffled = [...nameList].sort(() => 0.5 - Math.random());
+      const distractors = shuffled.filter(n => n !== correct).slice(0, 3);
+
+      const options = [...distractors, correct].sort(() => 0.5 - Math.random());
+      setChoices(options);
+    } else {
+      setChoices([]);
+    }
+  }, [currentIndex, difficulty, nameList]);
+
 
   const handleInputChange = (value: string) => {
   setUserAnswer(value);
@@ -185,7 +215,7 @@ export default function QuizPage() {
         
       <div className="content flex items-center justify-center">
       <div className="grid grid-rows-4 items-center w-full max-w-md text-center">
-
+        <div></div>
         <div className="grid grid-cols-5">
           <div></div>
           <div className="col-span-3 flex flex-col justify-center gap-2">
@@ -247,12 +277,16 @@ export default function QuizPage() {
 
       )
     case "load": 
-      return <div className="w-screenflex items-center justify-center">読み込み中...</div>;
+      fetchData();
+      return (
+        <div className="w-screenflex items-center justify-center">
+          <div>読み込み中...</div>
+        </div>);
 
     case "game": 
       if (currentIndex >= quizList.length) {
         return (
-          <div className="w-screen flex flex-col items-center justify-center text-center">
+          <div className="h-[calc(85vh)] w-screen flex flex-col items-center justify-center text-center">
             <h1 className="text-2xl font-bold mb-4">クイズ終了！</h1>
             <h1 className="text-2xl font-bold mb-4">10問中 {countCorrect}問 正解！</h1>
             <button
@@ -291,39 +325,63 @@ export default function QuizPage() {
 
           <div className="row-span-13 h-full max-w-md text-center">
             {!showAnswer ? (
-              <div className='content relative'>
-                <input
-                  type="text"
-                  value={userAnswer}
-                  onChange={(e) => handleInputChange(e.target.value)}
-                  placeholder="ここにポケモンの名前を入力"
-                  className="w-full p-2 border rounded mb-4 bg-white"
-                />
-                
-                {suggestions.length > 0 && (
-                  <ul className="absolute z-10 w-full border rounded bg-white text-left mb-4 max-h-40 overflow-y-auto">
-                    {suggestions.map((s, idx) => (
-                      <li
+              <>
+                {(difficulty === 1) || (difficulty === 2) || (difficulty === 3) ? (
+                  //選択肢形式
+                  <div className='content grid grid-cols-2 gap-2'>
+                    {choices.map((choices,idx) => (
+                      <button
                         key={idx}
                         onClick={() => {
-                          setUserAnswer(s);
-                          setSuggestions([]);
+                          //setUserAnswer(choices);これだと二回目のクリックでしか反応しないため直接判定
+                          choices === getFullName(current) ?
+                            (setResult('correct'),setCountCorrect(prev => prev + 1))
+                            : setResult('wrong');
+                          setShowAnswer(true);
                         }}
-                        className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                        className='bg-gray-200 p-3 rounded hover:bg-gray-300'
                       >
-                        {s}
-                      </li>
+                        {choices}
+                      </button>
                     ))}
-                  </ul>
-                )}
+                  </div>
+                ) : (
+                  //入力形式
+                  <div className='content relative'>
+                    <input
+                      type="text"
+                      value={userAnswer}
+                      onChange={(e) => handleInputChange(e.target.value)}
+                      placeholder="ここにポケモンの名前を入力"
+                      className="w-full p-2 border rounded mb-4 bg-white"
+                    />
+                    
+                    {suggestions.length > 0 && (
+                      <ul className="absolute z-10 w-full border rounded bg-white text-left mb-4 max-h-40 overflow-y-auto">
+                        {suggestions.map((s, idx) => (
+                          <li
+                            key={idx}
+                            onClick={() => {
+                              setUserAnswer(s);
+                              setSuggestions([]);
+                            }}
+                            className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                          >
+                            {s}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
 
-                <button
-                  onClick={handleCheck}
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                  答え合わせ
-                </button>
-              </div>
+                    <button
+                      onClick={handleCheck}
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    >
+                      答え合わせ
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className='h-[calc(100vh/2)] grid grid-rows-8 flex items-center justify-center'>
                 <span className={`row-span-1 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
@@ -333,7 +391,7 @@ export default function QuizPage() {
                     onClick={handleNext}
                     className="row-span-1 mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mx-auto"
                   >
-                    次の問題へ
+                    {currentIndex < 10 - 1 ? '次の問題へ' : '結果を見る'}
                   </button>
                 <div className='h-[calc(100vh/5)] row-span-4 max-w-md mx-auto'>
                   <img
