@@ -326,7 +326,7 @@ export default function QuizPage() {
           <div className="row-span-13 h-full max-w-md text-center">
             {!showAnswer ? (
               <>
-                {(difficulty === 1) || (difficulty ===2) || (difficulty ===2) ? (
+                {(difficulty === 1) || (difficulty === 2) || (difficulty === 3) ? (
                   //選択肢形式
                   <div className='content grid grid-cols-2 gap-2'>
                     {choices.map((choices,idx) => (
