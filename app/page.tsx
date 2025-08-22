@@ -59,6 +59,8 @@ export default function QuizPage() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [countCorrect, setCountCorrect] = useState(0);
 
+  const [choices,setChoices] = useState<String[]>([]);
+
   const [nameList, setNameList] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
@@ -134,6 +136,26 @@ export default function QuizPage() {
       .then((res) => res.json())
       .then((data) => setSurroundingData(data));
   }, []);
+
+
+  useEffect(() => {
+    if (!current) return;
+
+    if (difficulty === 1 || difficulty === 2) {
+      // 正解
+      const correct = getFullName(current);
+
+      // ランダムにダミーを選ぶ（重複を避ける）
+      const shuffled = [...nameList].sort(() => 0.5 - Math.random());
+      const distractors = shuffled.filter(n => n !== correct).slice(0, 3);
+
+      const options = [...distractors, correct].sort(() => 0.5 - Math.random());
+      setChoices(options);
+    } else {
+      setChoices([]);
+    }
+  }, [currentIndex, difficulty, nameList]);
+
 
   const handleInputChange = (value: string) => {
   setUserAnswer(value);
@@ -303,39 +325,63 @@ export default function QuizPage() {
 
           <div className="row-span-13 h-full max-w-md text-center">
             {!showAnswer ? (
-              <div className='content relative'>
-                <input
-                  type="text"
-                  value={userAnswer}
-                  onChange={(e) => handleInputChange(e.target.value)}
-                  placeholder="ここにポケモンの名前を入力"
-                  className="w-full p-2 border rounded mb-4 bg-white"
-                />
-                
-                {suggestions.length > 0 && (
-                  <ul className="absolute z-10 w-full border rounded bg-white text-left mb-4 max-h-40 overflow-y-auto">
-                    {suggestions.map((s, idx) => (
-                      <li
+              <>
+                {(difficulty === 1) || (difficulty ===2) ? (
+                  //選択肢形式
+                  <div className='content grid grid-cols-2 gap-2'>
+                    {choices.map((choices,idx) => (
+                      <button
                         key={idx}
                         onClick={() => {
-                          setUserAnswer(s);
-                          setSuggestions([]);
+                          //setUserAnswer(choices);これだと二回目のクリックでしか反応しないため直接判定
+                          choices === getFullName(current) ?
+                            (setResult('correct'),setCountCorrect(prev => prev + 1))
+                            : setResult('wrong');
+                          setShowAnswer(true);
                         }}
-                        className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                        className='bg-gray-200 p-3 rounded hover:bg-gray-300'
                       >
-                        {s}
-                      </li>
+                        {choices}
+                      </button>
                     ))}
-                  </ul>
-                )}
+                  </div>
+                ) : (
+                  //入力形式
+                  <div className='content relative'>
+                    <input
+                      type="text"
+                      value={userAnswer}
+                      onChange={(e) => handleInputChange(e.target.value)}
+                      placeholder="ここにポケモンの名前を入力"
+                      className="w-full p-2 border rounded mb-4 bg-white"
+                    />
+                    
+                    {suggestions.length > 0 && (
+                      <ul className="absolute z-10 w-full border rounded bg-white text-left mb-4 max-h-40 overflow-y-auto">
+                        {suggestions.map((s, idx) => (
+                          <li
+                            key={idx}
+                            onClick={() => {
+                              setUserAnswer(s);
+                              setSuggestions([]);
+                            }}
+                            className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                          >
+                            {s}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
 
-                <button
-                  onClick={handleCheck}
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                  答え合わせ
-                </button>
-              </div>
+                    <button
+                      onClick={handleCheck}
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    >
+                      答え合わせ
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className='h-[calc(100vh/2)] grid grid-rows-8 flex items-center justify-center'>
                 <span className={`row-span-1 font-bold ${result === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
