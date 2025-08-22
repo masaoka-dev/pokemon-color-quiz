@@ -141,7 +141,7 @@ export default function QuizPage() {
   useEffect(() => {
     if (!current) return;
 
-    if (difficulty === 1 || difficulty === 2) {
+    if (difficulty === 1 || difficulty === 2 || difficulty === 3) {
       // 正解
       const correct = getFullName(current);
 
