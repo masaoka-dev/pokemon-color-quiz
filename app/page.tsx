@@ -59,7 +59,7 @@ export default function QuizPage() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [countCorrect, setCountCorrect] = useState(0);
 
-  const [choices,setChoices] = useState<String[]>([]);
+  const [choices,setChoices] = useState<string[]>([]);
 
   const [nameList, setNameList] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
