@@ -97,9 +97,9 @@ export default function QuizPage() {
     const configStr = (difficulty === 1) ? `area: =[${area_str}]\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`
     //スーパーボール級：最終進化のみ　メガなし　キョダイなし　姿違いなし　選択肢あり
       : (difficulty === 2) ? `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\nsub: =0` 
-    //ハイパーボール級：最終進化のみ　選択肢なし  
-      : (difficulty === 3) ? `area: =[${area_str}]\nis_final_evolution: =true\nsub: =0` 
-    //マスターボール級（その他）：全てのポケモン
+    //ハイパーボール級：全てのポケモン　選択肢あり  
+      : (difficulty === 3) ? `area: =[${area_str}]` 
+    //マスターボール級（その他）：全てのポケモン　選択肢なし
       : `area: =[${area_str}]`;
 
     try {
@@ -326,7 +326,7 @@ export default function QuizPage() {
           <div className="row-span-13 h-full max-w-md text-center">
             {!showAnswer ? (
               <>
-                {(difficulty === 1) || (difficulty ===2) ? (
+                {(difficulty === 1) || (difficulty ===2) || (difficulty ===2) ? (
                   //選択肢形式
                   <div className='content grid grid-cols-2 gap-2'>
                     {choices.map((choices,idx) => (
