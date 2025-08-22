@@ -95,8 +95,8 @@ export default function QuizPage() {
 
     //モンスターボール級：有名ポケモンのみ　選択肢あり
     const configStr = (difficulty === 1) ? `area: =[${area_str}]\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`
-    //スーパーボール級：最終進化のみ　メガなし　キョダイなし　姿違いなし　選択肢あり
-      : (difficulty === 2) ? `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\nsub: =0` 
+    //スーパーボール級：最終進化のみ　メガなし　キョダイなし　選択肢あり
+      : (difficulty === 2) ? `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0` 
     //ハイパーボール級：全てのポケモン　選択肢あり  
       : (difficulty === 3) ? `area: =[${area_str}]` 
     //マスターボール級（その他）：全てのポケモン　選択肢なし
