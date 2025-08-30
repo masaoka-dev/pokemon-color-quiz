@@ -48,7 +48,15 @@ export default function QuizPage() {
   const [scene, setScene] = useState("title");
   const [difficulty, setDifficulty] = useState(0);
   const [areasSelected, setAreasSelected] = useState([true, true, true, true, true, true, true, true, true, true]);
-  // const [areasSelected, setAreasSelected] = useState([true, true, true, false, false, false, false, false, false, false]);
+  const [customConfig, setCustomConfig] = useState({
+    useChoices: false,
+    isFinalEvolution: false,
+    removeMega: false,
+    removeKyodai: false,
+    onlyFamous: false,
+  });
+  const [showCustomModal,setShowCustomModal] = useState(false);
+
   const [options, setOptionss] = useState([true, true]);
   
   const [allQuizData, setAllQuizData] = useState<QuizItem[]>([]);
@@ -82,7 +90,11 @@ export default function QuizPage() {
 
   const initialize_game = (difficulty: number) => {
     setDifficulty(difficulty);
-    setScene("load");
+    if(difficulty === 5) {
+      setShowCustomModal(true);
+    } else {
+      setScene("load");
+    }
   }
 
   const fetchData = async () => {
@@ -93,14 +105,23 @@ export default function QuizPage() {
     });
     const area_str = area_bool2int.join(", ");
 
+    let difficulty_premier = `area: =[${area_str}]`;
+    difficulty_premier += (customConfig.isFinalEvolution) ? `\nis_final_evolution: =true` : `` ;
+    difficulty_premier += (customConfig.removeMega) ? `\nmega_flg: =0` : `` ;
+    difficulty_premier += (customConfig.removeKyodai) ? `\nkyodai_flg: =0` : `` ;
+    difficulty_premier += (customConfig.onlyFamous) ? `\ndifficulty_easy_flg: =1` : `` ;
+
     //モンスターボール級：有名ポケモンのみ　選択肢あり
-    const configStr = (difficulty === 1) ? `area: =[${area_str}]\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`
+    const configStr = (difficulty === 1) ? `mega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`
     //スーパーボール級：最終進化のみ　メガなし　キョダイなし　選択肢あり
-      : (difficulty === 2) ? `area: =[${area_str}]\nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0` 
+      : (difficulty === 2) ? `is_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0` 
     //ハイパーボール級：全てのポケモン　選択肢あり  
-      : (difficulty === 3) ? `area: =[${area_str}]` 
-    //マスターボール級（その他）：全てのポケモン　選択肢なし
-      : `area: =[${area_str}]`;
+      : (difficulty === 3) ? `` 
+    //マスターボール級：全てのポケモン　選択肢なし
+      : (difficulty === 4) ? ``
+    //プレミアボール級：難易度をカスタムできる
+      : (difficulty === 5) ? difficulty_premier
+      : ``;
 
     try {
       const res = await fetch(`/api/create_group`,{
@@ -141,7 +162,7 @@ export default function QuizPage() {
   useEffect(() => {
     if (!current) return;
 
-    if (difficulty === 1 || difficulty === 2 || difficulty === 3) {
+    if (difficulty === 1 || difficulty === 2 || difficulty === 3 || (difficulty === 5 && customConfig.useChoices)) {
       // 正解
       const correct = getFullName(current);
 
@@ -154,7 +175,7 @@ export default function QuizPage() {
     } else {
       setChoices([]);
     }
-  }, [currentIndex, difficulty, nameList]);
+  }, [currentIndex, difficulty, nameList,customConfig]);
 
 
   const handleInputChange = (value: string) => {
@@ -214,16 +235,15 @@ export default function QuizPage() {
       return (
         
       <div className="content flex items-center justify-center">
-      <div className="grid grid-rows-4 items-center w-full max-w-md text-center">
-        <div></div>
+      <div className="grid grid-rows-5 items-center w-full max-w-md text-center">
         <div className="grid grid-cols-5">
           <div></div>
-          <div className="col-span-3 flex flex-col justify-center gap-2">
+          <div className="content col-span-3 flex flex-col justify-center gap-2">
             <button
               onClick={() => {
                 initialize_game(1);
               }}
-              className="bg-red-700 text-white py-2 rounded hover:bg-red-800"
+              className="bg-red-500 font-bold text-white py-2 rounded hover:bg-red-700"
             >
               モンスターボール級
             </button>
@@ -231,7 +251,7 @@ export default function QuizPage() {
               onClick={() => {
                 initialize_game(2);
               }}
-              className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+              className="bg-blue-500 font-bold text-white py-2 rounded hover:bg-blue-700"
             >
               スーパーボール級
             </button>
@@ -239,7 +259,7 @@ export default function QuizPage() {
               onClick={() => {
                 initialize_game(3);
               }}
-              className="bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700"
+              className="bg-yellow-500 font-bold text-white py-2 rounded hover:bg-yellow-700"
             >
               ハイパーボール級
             </button>
@@ -247,31 +267,120 @@ export default function QuizPage() {
               onClick={() => {
                 initialize_game(4);
               }}
-              className="bg-purple-600 text-white py-2 rounded hover:bg-purple-700"
+              className="bg-purple-500 font-bold text-white py-2 rounded hover:bg-purple-700"
             >
               マスターボール級
             </button>
+            <button
+              onClick={() => {
+                initialize_game(5);
+              }}
+              className="content bg-white font-bold text-black py-2 rounded hover:bg-gray-200 outline-solid outline-red-400"
+            >
+              プレミアボール級
+            </button>
+
+            {showCustomModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black/20 z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                  <h1 className="text-xl font-bold mb-4">プレミアボール級 カスタム設定</h1>
+
+                  {/* 設定チェックボックス群 */}
+                  <div className="space-y-2 text-left">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={customConfig.useChoices}
+                        onChange={(e) =>
+                          setCustomConfig({ ...customConfig, useChoices: e.target.checked })
+                        }
+                      /> 選択肢あり
+                    </label>
+
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={customConfig.isFinalEvolution}
+                        onChange={(e) =>
+                          setCustomConfig({ ...customConfig, isFinalEvolution: e.target.checked })
+                        }
+                      /> 進化前を除く
+                    </label>
+
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={customConfig.removeMega}
+                        onChange={(e) =>
+                          setCustomConfig({ ...customConfig, removeMega: e.target.checked })
+                        }
+                      /> メガシンカを除く
+                    </label>
+
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={customConfig.removeKyodai}
+                        onChange={(e) =>
+                          setCustomConfig({ ...customConfig, removeKyodai: e.target.checked })
+                        }
+                      /> キョダイマックスを除く
+                    </label>
+
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={customConfig.onlyFamous}
+                        onChange={(e) =>
+                          setCustomConfig({ ...customConfig, onlyFamous: e.target.checked })
+                        }
+                      /> 有名なポケモンのみに絞る
+                    </label>
+                  </div>
+
+                  {/* 地方選択 */}
+                  <div className="grid grid-rows-3 grid-cols-4 gap-1 px-4 mt-4">
+                    {area_names.map((area_name, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setAreasSelected(prev =>
+                            prev.map((selected, i) => (i === index ? !selected : selected))
+                          );
+                        }}
+                        className={area_button_color(areasSelected[index])}
+                      >
+                        {area_name}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* ボタン */}
+                  <div className="flex justify-end gap-2 mt-6">
+                    <button
+                      onClick={() => setShowCustomModal(false)}
+                      className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                    >
+                      キャンセル
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowCustomModal(false);
+                        setScene("load"); // ここからゲーム開始
+                      }}
+                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                      ゲーム開始
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
           </div>
           <div></div>
-        </div>
-
-        <div className="grid grid-rows-3 grid-cols-4 justify-center gap-1 px-4">
-          {area_names.map((area_name, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                setAreasSelected(prev =>
-                  prev.map((selected, i) =>
-                    (i === index ? !selected : selected))
-                );
-              }}
-              className={area_button_color(areasSelected[index])}
-            >
-              {area_name}
-            </button>
-          ))}
-        </div>
-          
+        </div>          
       </div>
     </div>
 
@@ -326,7 +435,7 @@ export default function QuizPage() {
           <div className="row-span-13 h-full max-w-md text-center">
             {!showAnswer ? (
               <>
-                {(difficulty === 1) || (difficulty === 2) || (difficulty === 3) ? (
+                {(difficulty === 1) || (difficulty === 2) || (difficulty === 3) || ((difficulty === 5) && (customConfig.useChoices))? (
                   //選択肢形式
                   <div className='content grid grid-cols-2 gap-2'>
                     {choices.map((choices,idx) => (
