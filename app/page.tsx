@@ -66,6 +66,8 @@ export default function QuizPage() {
   const [result, setResult] = useState<'correct' | 'wrong' | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [countCorrect, setCountCorrect] = useState(0);
+  const [hint1State, setHint1State] = useState(false);
+  const [hint2State, setHint2State] = useState(false);
 
   const [choices,setChoices] = useState<string[]>([]);
 
@@ -228,6 +230,8 @@ export default function QuizPage() {
     setUserAnswer('');
     setResult(null);
     setShowAnswer(false);
+    setHint1State(false);
+    setHint2State(false);
   };
 
   switch(scene) {
@@ -464,7 +468,7 @@ export default function QuizPage() {
                       value={userAnswer}
                       onChange={(e) => handleInputChange(e.target.value)}
                       placeholder="ここにポケモンの名前を入力"
-                      className="w-full p-2 border rounded mb-4 bg-white"
+                      className="w-[calc(90vw)] p-2 border rounded mb-4 bg-white"
                     />
                     
                     {suggestions.length > 0 && (
@@ -489,6 +493,21 @@ export default function QuizPage() {
                       className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                     >
                       答え合わせ
+                    </button>
+                    <br/>
+                    <button
+                      onClick={() => {setHint1State(true);}}
+                      className={`${hint1State ? "bg-gray-200 text-black rounded hover:bg-gray-300"
+                        : "bg-green-500 text-white rounded hover:bg-gray-300"} w-[calc(90vw)] text-left px-2 py-1 mt-5`}
+                      >
+                      {hint1State ? (<div><strong>タイプ: </strong> {[type_1_name, type_2_name].filter(Boolean).join(' / ')}</div>) : (<div><strong>ヒント:</strong> タイプ</div>)}
+                    </button>
+                    <button
+                      onClick={() => {setHint2State(true);}}
+                      className={`${hint2State ? "bg-gray-200 text-black rounded hover:bg-gray-300"
+                        : "bg-green-500 text-white rounded hover:bg-gray-300"} w-[calc(90vw)] text-left px-2 py-1 mt-5`}
+                      >
+                      {hint2State ? (<div><strong>とくせい: </strong> {[tokusei_1_name, tokusei_2_name].filter(Boolean).join(' / ')}</div>) : (<div><strong>ヒント:</strong> とくせい</div>)}
                     </button>
                   </div>
                 )}
