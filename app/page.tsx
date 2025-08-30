@@ -418,7 +418,7 @@ export default function QuizPage() {
       }
 
       return (
-        <div className="flex flex-col items-center justify-center">
+        <div className="grid grid-rows-20 h-[calc(80vh)] flex items-center justify-center">
           <div className="row-span-2 w-full max-w-md text-center">
             <h1 className="text-xl font-bold mt-4"> {currentIndex + 1} / 10</h1>
             <p className="mb-2 text-gray-600">この色のポケモンはだれ？</p>
@@ -428,7 +428,7 @@ export default function QuizPage() {
             <img
               src={`/pokemon_treemaps/${current.image_treemap}`}
               alt={`クイズ画像 ${currentIndex + 1}`}
-              className="h-full max-w-md object-cover"
+              className="max-w-md object-cover"
             />
           </div>
 
