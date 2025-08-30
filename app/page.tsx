@@ -420,7 +420,7 @@ export default function QuizPage() {
       return (
         <div className="grid grid-rows-20 h-[calc(80vh)] flex items-center justify-center">
           <div className="row-span-2 w-full max-w-md text-center">
-            <h1 className="text-xl font-bold mb-4"> {currentIndex + 1} / 10</h1>
+            <h1 className="text-xl font-bold mt-4"> {currentIndex + 1} / 10</h1>
             <p className="mb-2 text-gray-600">この色のポケモンはだれ？</p>
 
           </div>
