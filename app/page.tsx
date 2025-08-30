@@ -428,7 +428,7 @@ export default function QuizPage() {
             <img
               src={`/pokemon_treemaps/${current.image_treemap}`}
               alt={`クイズ画像 ${currentIndex + 1}`}
-              className="w-full max-w-md h-auto max-h-[30vh] mx-auto object-contain"
+              className="h-full max-w-md object-cover"
             />
           </div>
 
