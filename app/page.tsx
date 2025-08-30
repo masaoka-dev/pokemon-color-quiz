@@ -418,7 +418,7 @@ export default function QuizPage() {
       }
 
       return (
-        <div className="grid grid-rows-20 h-[calc(80vh)] flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
           <div className="row-span-2 w-full max-w-md text-center">
             <h1 className="text-xl font-bold mt-4"> {currentIndex + 1} / 10</h1>
             <p className="mb-2 text-gray-600">この色のポケモンはだれ？</p>
@@ -432,7 +432,7 @@ export default function QuizPage() {
             />
           </div>
 
-          <div className="row-span-13 h-full max-w-md text-center flex items-center justify-center">
+          <div className="row-span-13 h-full max-w-md flex text-center items-center justify-center">
             {!showAnswer ? (
               <>
                 {(difficulty === 1) || (difficulty === 2) || (difficulty === 3) || ((difficulty === 5) && (customConfig.useChoices))? (
