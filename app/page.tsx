@@ -432,12 +432,12 @@ export default function QuizPage() {
             />
           </div>
 
-          <div className="row-span-13 h-full max-w-md flex text-center items-center justify-center">
+          <div className="row-span-13 h-full max-w-md flex text-center justify-center">
             {!showAnswer ? (
               <>
                 {(difficulty === 1) || (difficulty === 2) || (difficulty === 3) || ((difficulty === 5) && (customConfig.useChoices))? (
                   //選択肢形式
-                  <div className='content grid grid-rows-4 gap-2 w-[calc(90vw)]'>
+                  <div className='content grid grid-rows-7 gap-2 w-[calc(90vw)] text-center py-2'>
                     {choices.map((choices,idx) => (
                       <button
                         key={idx}
@@ -453,7 +453,9 @@ export default function QuizPage() {
                         {choices}
                       </button>
                     ))}
+                    <div className='row-span-3'></div>
                   </div>
+                  
                 ) : (
                   //入力形式
                   <div className='content relative'>
