@@ -107,7 +107,7 @@ export default function QuizPage() {
 
     let difficulty_premier = `area: =[${area_str}]`;
     difficulty_premier += (customConfig.isFinalEvolution) ? `\nis_final_evolution: =true` : `` ;
-    difficulty_premier += (customConfig.removeMega) ? `\nmega_flg: =0` : `` ;
+    difficulty_premier += (customConfig.removeMega) ? `\nmega_flg: =0\ngenshi_flg: =0` : `` ;
     difficulty_premier += (customConfig.removeKyodai) ? `\nkyodai_flg: =0` : `` ;
     difficulty_premier += (customConfig.onlyFamous) ? `\ndifficulty_easy_flg: =1` : `` ;
 
@@ -314,7 +314,7 @@ export default function QuizPage() {
                         onChange={(e) =>
                           setCustomConfig({ ...customConfig, removeMega: e.target.checked })
                         }
-                      /> メガシンカを除く
+                      /> メガシンカ・ゲンシカイキを除く
                     </label>
 
                     <label className="flex items-center gap-2">
