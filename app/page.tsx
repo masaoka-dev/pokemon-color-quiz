@@ -428,11 +428,11 @@ export default function QuizPage() {
             <img
               src={`/pokemon_treemaps/${current.image_treemap}`}
               alt={`クイズ画像 ${currentIndex + 1}`}
-              className="h-full max-w-md object-cover"
+              className="w-full max-w-md h-auto max-h-[30vh] mx-auto object-contain"
             />
           </div>
 
-          <div className="row-span-13 h-full max-w-md text-center flex items-center justify-center">
+          <div className="row-span-13 h-full max-w-md flex text-center items-center justify-center">
             {!showAnswer ? (
               <>
                 {(difficulty === 1) || (difficulty === 2) || (difficulty === 3) || ((difficulty === 5) && (customConfig.useChoices))? (
