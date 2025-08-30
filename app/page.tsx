@@ -432,7 +432,7 @@ export default function QuizPage() {
             />
           </div>
 
-          <div className="row-span-13 h-full max-w-md text-center">
+          <div className="row-span-13 h-full max-w-md text-center flex items-center justify-center">
             {!showAnswer ? (
               <>
                 {(difficulty === 1) || (difficulty === 2) || (difficulty === 3) || ((difficulty === 5) && (customConfig.useChoices))? (
