@@ -51,8 +51,8 @@ export default function QuizPage() {
   const [customConfig, setCustomConfig] = useState({
     useChoices: false,
     isFinalEvolution: false,
-    includeMega: false,
-    includeKyodai: false,
+    removeMega: false,
+    removeKyodai: false,
     onlyFamous: false,
   });
   const [showCustomModal,setShowCustomModal] = useState(false);
@@ -106,15 +106,15 @@ export default function QuizPage() {
     const area_str = area_bool2int.join(", ");
 
     let difficulty_premier = `area: =[${area_str}]`;
-    difficulty_premier += (customConfig.isFinalEvolution) ? `\nis_final_evolution: =1` : `` ;
-    difficulty_premier += (customConfig.includeMega) ? `` : `\nmega_flg: =0` ;
-    difficulty_premier += (customConfig.includeKyodai) ? `` : `\nkyodai_flg: =0` ;
+    difficulty_premier += (customConfig.isFinalEvolution) ? `\nis_final_evolution: =true` : `` ;
+    difficulty_premier += (customConfig.removeMega) ? `\nmega_flg: =0` : `` ;
+    difficulty_premier += (customConfig.removeKyodai) ? `\nkyodai_flg: =0` : `` ;
     difficulty_premier += (customConfig.onlyFamous) ? `\ndifficulty_easy_flg: =1` : `` ;
 
     //モンスターボール級：有名ポケモンのみ　選択肢あり
     const configStr = (difficulty === 1) ? `mega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0\ndifficulty_easy_flg: =1`
     //スーパーボール級：最終進化のみ　メガなし　キョダイなし　選択肢あり
-      : (difficulty === 2) ? `nis_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0` 
+      : (difficulty === 2) ? `is_final_evolution: =true\nmega_flg: =0\ngenshi_flg: =0\nkyodai_flg: =0` 
     //ハイパーボール級：全てのポケモン　選択肢あり  
       : (difficulty === 3) ? `` 
     //マスターボール級：全てのポケモン　選択肢なし
@@ -310,21 +310,21 @@ export default function QuizPage() {
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
-                        checked={customConfig.includeMega}
+                        checked={customConfig.removeMega}
                         onChange={(e) =>
-                          setCustomConfig({ ...customConfig, includeMega: e.target.checked })
+                          setCustomConfig({ ...customConfig, removeMega: e.target.checked })
                         }
-                      /> メガシンカを含む
+                      /> メガシンカを除く
                     </label>
 
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
-                        checked={customConfig.includeKyodai}
+                        checked={customConfig.removeKyodai}
                         onChange={(e) =>
-                          setCustomConfig({ ...customConfig, includeKyodai: e.target.checked })
+                          setCustomConfig({ ...customConfig, removeKyodai: e.target.checked })
                         }
-                      /> キョダイマックスを含む
+                      /> キョダイマックスを除く
                     </label>
 
                     <label className="flex items-center gap-2">
