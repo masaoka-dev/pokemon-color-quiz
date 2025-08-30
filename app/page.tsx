@@ -437,7 +437,7 @@ export default function QuizPage() {
               <>
                 {(difficulty === 1) || (difficulty === 2) || (difficulty === 3) || ((difficulty === 5) && (customConfig.useChoices))? (
                   //選択肢形式
-                  <div className='content grid grid-cols-2 gap-2'>
+                  <div className='content grid grid-rows-4 gap-2 w-[calc(90vw)]'>
                     {choices.map((choices,idx) => (
                       <button
                         key={idx}
