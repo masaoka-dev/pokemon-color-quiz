@@ -235,7 +235,7 @@ export default function QuizPage() {
       return (
         
       <div className="content flex items-center justify-center">
-      <div className="grid grid-rows-5 items-center w-full max-w-md text-center">
+      <div className="items-center w-full max-w-md text-center">
         <div className="grid grid-cols-5">
           <div></div>
           <div className="content col-span-3 flex flex-col justify-center gap-2">
@@ -395,7 +395,7 @@ export default function QuizPage() {
     case "game": 
       if (currentIndex >= quizList.length) {
         return (
-          <div className="h-[calc(85vh)] w-screen flex flex-col items-center justify-center text-center">
+          <div className="h-[calc(80vh)] w-screen flex flex-col items-center justify-center text-center">
             <h1 className="text-2xl font-bold mb-4">クイズ終了！</h1>
             <h1 className="text-2xl font-bold mb-4">10問中 {countCorrect}問 正解！</h1>
             <button
@@ -418,7 +418,7 @@ export default function QuizPage() {
       }
 
       return (
-        <div className="grid grid-rows-20 h-[calc(90vh)] flex items-center justify-center">
+        <div className="grid grid-rows-20 h-[calc(80vh)] flex items-center justify-center">
           <div className="row-span-2 w-full max-w-md text-center">
             <h1 className="text-xl font-bold mb-4"> {currentIndex + 1} / 10</h1>
             <p className="mb-2 text-gray-600">この色のポケモンはだれ？</p>
