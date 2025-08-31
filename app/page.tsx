@@ -68,6 +68,7 @@ export default function QuizPage() {
   const [countCorrect, setCountCorrect] = useState(0);
   const [hint1State, setHint1State] = useState(false);
   const [hint2State, setHint2State] = useState(false);
+  const [score, setScore] = useState(0);
 
   const [choices,setChoices] = useState<string[]>([]);
 
@@ -92,6 +93,7 @@ export default function QuizPage() {
 
   const initialize_game = (difficulty: number) => {
     setDifficulty(difficulty);
+    setScore(0);
     if(difficulty === 5) {
       setShowCustomModal(true);
     } else {
@@ -219,6 +221,7 @@ export default function QuizPage() {
     if (userAnswer.trim() === getFullName(current)) {
       setResult('correct');
       setCountCorrect((prev) => prev + 1);
+      setScore(prev => prev + 10 - ((hint1State ? 2 : 0) + (hint2State ? 2 : 0)));
     } else {
       setResult('wrong');
     }
@@ -402,6 +405,7 @@ export default function QuizPage() {
           <div className="h-[calc(80vh)] w-screen flex flex-col items-center justify-center text-center">
             <h1 className="text-2xl font-bold mb-4">クイズ終了！</h1>
             <h1 className="text-2xl font-bold mb-4">10問中 {countCorrect}問 正解！</h1>
+            <h1 className="text-2xl font-bold mb-4">スコア: {score}</h1>
             <button
               onClick={() => {
                 const reshuffled = [...allQuizData].sort(() => 0.5 - Math.random());
@@ -425,6 +429,10 @@ export default function QuizPage() {
         <div className="grid grid-rows-20 h-[calc(80vh)] flex items-center justify-center">
           <div className="row-span-2 w-full max-w-md text-center">
             <h1 className="text-xl font-bold mt-4"> {currentIndex + 1} / 10</h1>
+            {/* <progress
+              value={(currentIndex + 1) / 10}
+              className='rounded-full bg-black'
+            /> */}
             <p className="mb-2 text-gray-600">この色のポケモンはだれ？</p>
 
           </div>
@@ -448,7 +456,10 @@ export default function QuizPage() {
                         onClick={() => {
                           //setUserAnswer(choices);これだと二回目のクリックでしか反応しないため直接判定
                           choices === getFullName(current) ?
-                            (setResult('correct'),setCountCorrect(prev => prev + 1))
+                            ( setResult('correct'),
+                              setCountCorrect(prev => prev + 1),
+                              setScore(prev => prev + 10 - ((hint1State ? 2 : 0) + (hint2State ? 2 : 0)))
+                            )
                             : setResult('wrong');
                           setShowAnswer(true);
                         }}
@@ -498,7 +509,7 @@ export default function QuizPage() {
                     <br/>
                     <button
                       onClick={() => {setHint1State(true);}}
-                      className={`${hint1State ? "bg-gray-200 text-black rounded hover:bg-gray-300"
+                      className={`${hint1State ? "bg-gray-200 text-black rounded"
                         : "bg-green-500 text-white rounded hover:bg-green-600"} text-left px-2 py-1 mt-5 w-[calc(70vw)] sm:w-[calc(60vw)] md:w-[calc(50vw)] xl:w-[calc(30vw)]`}
                       >
                       {hint1State ? (<div><strong>タイプ: </strong> {[type_1_name, type_2_name].filter(Boolean).join(' / ')}</div>) : (<div><strong>ヒント:</strong> タイプ</div>)}
@@ -506,7 +517,7 @@ export default function QuizPage() {
                     <br/>
                     <button
                       onClick={() => {setHint2State(true);}}
-                      className={`${hint2State ? "bg-gray-200 text-black rounded hover:bg-gray-300"
+                      className={`${hint2State ? "bg-gray-200 text-black rounded"
                         : "bg-green-500 text-white rounded hover:bg-green-600"} text-left px-2 py-1 mt-5 w-[calc(70vw)] sm:w-[calc(60vw)] md:w-[calc(50vw)] xl:w-[calc(30vw)]`}
                       >
                       {hint2State ? (<div><strong>とくせい: </strong> {[tokusei_1_name, tokusei_2_name].filter(Boolean).join(' / ')}</div>) : (<div><strong>ヒント:</strong> とくせい</div>)}
